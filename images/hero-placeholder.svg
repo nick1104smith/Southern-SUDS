@@ -1,0 +1,71 @@
+<svg width="1600" height="1000" viewBox="0 0 1600 1000" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#05070d"/>
+      <stop offset="45%" stop-color="#9f0909"/>
+      <stop offset="100%" stop-color="#ef1b1b"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="30%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="48%" stop-color="#ffffff" stop-opacity="0.12"/>
+      <stop offset="55%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="60%" cy="55%" r="55%">
+      <stop offset="0%" stop-color="#ff3131" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#ff3131" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <rect width="1600" height="1000" fill="url(#glow)"/>
+  <rect width="1600" height="1000" fill="url(#shine)"/>
+
+  <!-- ground shadow -->
+  <ellipse cx="820" cy="760" rx="480" ry="40" fill="#000000" opacity="0.35"/>
+
+  <!-- truck silhouette -->
+  <g fill="#e9ecf3">
+    <path d="M480 700
+             L480 560
+             C480 540 495 525 515 525
+             L640 525
+             L700 440
+             C712 424 731 415 751 415
+             L940 415
+             C965 415 987 428 999 450
+             L1060 560
+             L1120 570
+             C1150 575 1170 600 1170 630
+             L1170 700
+             Z"/>
+    <!-- cab window -->
+    <path d="M700 470 L748 470 L748 525 L660 525 Z" fill="#c9c9c9" opacity="0.85"/>
+    <path d="M772 470 L935 470 C948 470 958 478 963 490 L985 525 L772 525 Z" fill="#c9c9c9" opacity="0.85"/>
+  </g>
+
+  <!-- wheels -->
+  <g>
+    <circle cx="600" cy="705" r="58" fill="#141b30"/>
+    <circle cx="600" cy="705" r="30" fill="#c8cedb"/>
+    <circle cx="1040" cy="705" r="58" fill="#141b30"/>
+    <circle cx="1040" cy="705" r="30" fill="#c8cedb"/>
+  </g>
+
+  <!-- water droplets -->
+  <g fill="#c9c9c9" opacity="0.8">
+    <ellipse cx="360" cy="220" rx="6" ry="10"/>
+    <ellipse cx="420" cy="300" rx="4" ry="7"/>
+    <ellipse cx="1240" cy="240" rx="5" ry="9"/>
+    <ellipse cx="1300" cy="330" rx="4" ry="7"/>
+    <ellipse cx="300" cy="420" rx="4" ry="6"/>
+    <ellipse cx="1360" cy="450" rx="5" ry="8"/>
+  </g>
+
+  <!-- soap foam bubbles near base -->
+  <g fill="#ffffff" opacity="0.15">
+    <circle cx="500" cy="770" r="14"/>
+    <circle cx="540" cy="790" r="9"/>
+    <circle cx="1150" cy="775" r="16"/>
+    <circle cx="1190" cy="795" r="10"/>
+  </g>
+</svg>

@@ -1,0 +1,29 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9f0909"/>
+      <stop offset="100%" stop-color="#ff3131"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="30%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="48%" stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="60%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#g)"/>
+  <rect width="400" height="300" fill="url(#shine)"/>
+  <path d="M90 190
+           C90 170 110 155 135 155
+           L155 130 C165 118 180 112 196 112
+           L250 112 C266 112 281 120 289 134
+           L305 155 L320 158
+           C332 160 340 170 340 182
+           L340 190 Z"
+        fill="#e9ecf3"/>
+  <circle cx="150" cy="195" r="20" fill="#141b30"/>
+  <circle cx="300" cy="195" r="20" fill="#141b30"/>
+  <g fill="#ffffff" opacity="0.9">
+    <path d="M330 70 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4z"/>
+    <path d="M70 100 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z"/>
+  </g>
+</svg>

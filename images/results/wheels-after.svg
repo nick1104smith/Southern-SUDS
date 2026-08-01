@@ -1,0 +1,29 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9f0909"/>
+      <stop offset="100%" stop-color="#ff3131"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="30%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="48%" stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="60%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#g)"/>
+  <rect width="400" height="300" fill="url(#shine)"/>
+  <circle cx="200" cy="150" r="80" fill="#141b30"/>
+  <circle cx="200" cy="150" r="46" fill="#e9ecf3"/>
+  <g stroke="#c8cedb" stroke-width="6">
+    <line x1="200" y1="150" x2="200" y2="108"/>
+    <line x1="200" y1="150" x2="236" y2="128"/>
+    <line x1="200" y1="150" x2="236" y2="172"/>
+    <line x1="200" y1="150" x2="164" y2="172"/>
+    <line x1="200" y1="150" x2="164" y2="128"/>
+  </g>
+  <circle cx="200" cy="150" r="12" fill="#141b30"/>
+  <g fill="#ffffff" opacity="0.9">
+    <path d="M320 60 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4z"/>
+    <path d="M70 220 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z"/>
+  </g>
+</svg>

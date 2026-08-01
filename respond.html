@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Choose Your Appointment Time | Southern Suds Mobile Detailing</title>
+<meta name="description" content="Select your appointment time for Southern Suds Mobile Detailing.">
+<meta name="robots" content="noindex">
+
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="apple-touch-icon" href="images/logo.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<header class="site-header" id="site-header">
+  <nav class="navbar" aria-label="Primary navigation">
+    <a href="index.html" class="logo" aria-label="Southern Suds Mobile Detailing home">
+      <img
+        src="images/logo.png"
+        alt="Southern Suds Mobile Detailing logo"
+        class="brand-logo brand-logo--nav"
+        width="640" height="640">
+    </a>
+
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html#home">Home</a></li>
+      <li><a href="index.html#packages">Packages</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#faq">FAQ</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <a href="index.html#booking" class="btn btn-primary nav-book-btn">Book Now</a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<main id="main-content">
+
+  <!-- ============================================================
+       APPOINTMENT TIME SELECTION
+       ============================================================ -->
+  <section class="section section-dark" id="respond-page" aria-labelledby="respond-heading">
+    <div class="container container-narrow">
+      <div class="section-heading reveal">
+        <span class="eyebrow">Southern Suds Mobile Detailing</span>
+        <h1 id="respond-heading">Choose Your Appointment Time</h1>
+      </div>
+
+      <div id="respond-loading" class="form-confirmation reveal">
+        <p>Loading your appointment options…</p>
+      </div>
+
+      <div id="respond-error" class="form-confirmation reveal" hidden>
+        <p id="respond-error-text"></p>
+        <p>Call or text us at <a href="tel:+17132691708">(713) 269-1708</a> and we'll help sort it out.</p>
+      </div>
+
+      <div id="respond-options" class="booking-form reveal" hidden>
+        <p id="respond-intro" class="section-sub" style="text-align:left;"></p>
+        <div id="respond-time-list" class="respond-time-list"></div>
+        <button type="button" class="btn btn-primary btn-lg btn-block" id="respond-confirm-btn" disabled>Confirm Selected Time</button>
+        <p id="respond-submit-error" class="field-error" style="margin-top:10px;"></p>
+      </div>
+
+      <div id="respond-success" class="form-confirmation reveal" hidden>
+        <img
+          src="images/logo.png"
+          alt="Southern Suds Mobile Detailing logo"
+          class="brand-logo brand-logo--confirm"
+          width="640" height="640" loading="lazy">
+        <h3>You're all set!</h3>
+        <p id="respond-success-text"></p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer class="site-footer">
+  <div class="container footer-grid">
+
+    <div class="footer-col footer-brand">
+      <div class="footer-logo">
+        <img
+          src="images/logo.png"
+          alt="Southern Suds Mobile Detailing logo"
+          class="brand-logo brand-logo--footer"
+          width="640" height="640" loading="lazy">
+      </div>
+      <p class="footer-desc">Professional mobile auto detailing that comes to your home or workplace. Interior, exterior, and specialty protection services for cars, trucks, and SUVs.</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul class="footer-list">
+        <li class="footer-tagline">Serving Houston &amp; Surrounding Areas</li>
+        <li>Phone: <a href="tel:+17132691708">(713) 269-1708</a></li>
+        <li><a href="mailto:southernsudsmd@gmail.com">southernsudsmd@gmail.com</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul class="footer-list">
+        <li><a href="index.html#packages">Packages</a></li>
+        <li><a href="index.html#services">Services</a></li>
+        <li><a href="index.html#faq">FAQ</a></li>
+        <li><a href="index.html#booking">Book Now</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; <span id="footer-year"></span> Southern Suds Mobile Detailing. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Back to top -->
+<button type="button" class="back-to-top" id="back-to-top" aria-label="Back to top" hidden>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12l7-7 7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+
+<script src="script.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var loadingEl = document.getElementById('respond-loading');
+  var errorEl = document.getElementById('respond-error');
+  var errorTextEl = document.getElementById('respond-error-text');
+  var optionsEl = document.getElementById('respond-options');
+  var introEl = document.getElementById('respond-intro');
+  var listEl = document.getElementById('respond-time-list');
+  var confirmBtn = document.getElementById('respond-confirm-btn');
+  var submitErrorEl = document.getElementById('respond-submit-error');
+  var successEl = document.getElementById('respond-success');
+  var successTextEl = document.getElementById('respond-success-text');
+
+  function showOnly(el) {
+    [loadingEl, errorEl, optionsEl, successEl].forEach(function (e) { e.hidden = e !== el; });
+  }
+
+  function showError(message) {
+    errorTextEl.textContent = message;
+    showOnly(errorEl);
+  }
+
+  var params = new URLSearchParams(window.location.search);
+  var token = params.get('token');
+  var apiUrl = window.BOOKING_API_URL;
+
+  if (!apiUrl || apiUrl.indexOf('PASTE_YOUR') !== -1) {
+    showError('This page is not fully set up yet.');
+    return;
+  }
+  if (!token) {
+    showError('This link is missing information. Please use the link from your email.');
+    return;
+  }
+
+  var selectedIndex = null;
+
+  fetch(apiUrl + '?action=getByToken&token=' + encodeURIComponent(token))
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      if (!data.ok) {
+        showError(data.error || 'This link is no longer valid.');
+        return;
+      }
+      var booking = data.booking;
+      if (booking.status !== 'PENDING') {
+        showError('This request has already been handled. Call or text us if you have questions.');
+        return;
+      }
+      if (!booking.proposedTimes || !booking.proposedTimes.length) {
+        showError('No alternate times are available on this request yet.');
+        return;
+      }
+
+      introEl.textContent = 'Your requested appointment time is unavailable, but we have other options available. Please select the time that works best for you.';
+
+      listEl.innerHTML = '';
+      booking.proposedTimes.forEach(function (t, i) {
+        var label = document.createElement('label');
+        label.className = 'respond-time-option';
+        label.innerHTML =
+          '<input type="radio" name="respond-time" value="' + i + '">' +
+          '<span>' + formatDate(t.date) + ' — ' + escapeHtml(t.time) + '</span>';
+        listEl.appendChild(label);
+      });
+
+      listEl.addEventListener('change', function (e) {
+        if (e.target.name === 'respond-time') {
+          selectedIndex = e.target.value;
+          confirmBtn.disabled = false;
+        }
+      });
+
+      showOnly(optionsEl);
+    })
+    .catch(function () {
+      showError('We could not load your appointment options. Please try again in a moment.');
+    });
+
+  confirmBtn.addEventListener('click', function () {
+    if (selectedIndex === null) { return; }
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = 'Confirming…';
+    submitErrorEl.textContent = '';
+
+    fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'respondToProposal', token: token, selectedIndex: Number(selectedIndex) })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (!data.ok) {
+          submitErrorEl.textContent = data.error || 'Something went wrong. Please try again.';
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = 'Confirm Selected Time';
+          return;
+        }
+        var chosen = listEl.querySelector('input[name="respond-time"]:checked + span').textContent;
+        successTextEl.textContent = 'Your appointment is confirmed for ' + chosen + '. We look forward to taking care of your vehicle.';
+        showOnly(successEl);
+      })
+      .catch(function () {
+        submitErrorEl.textContent = 'Something went wrong. Please try again, or call/text us at (713) 269-1708.';
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = 'Confirm Selected Time';
+      });
+  });
+
+  function formatDate(dateStr) {
+    try {
+      var d = new Date(dateStr + 'T00:00:00');
+      return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    } catch (e) {
+      return dateStr;
+    }
+  }
+
+  function escapeHtml(str) {
+    return String(str == null ? '' : str).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+})();
+</script>
+</body>
+</html>

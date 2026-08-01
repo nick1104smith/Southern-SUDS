@@ -1,0 +1,26 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9f0909"/>
+      <stop offset="100%" stop-color="#ff3131"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="35%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="65%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#g)"/>
+  <rect width="400" height="300" fill="url(#shine)"/>
+  <g stroke="#ffffff" stroke-width="7" fill="none">
+    <circle cx="200" cy="150" r="62"/>
+    <line x1="200" y1="150" x2="200" y2="98"/>
+    <line x1="200" y1="150" x2="155" y2="176"/>
+    <line x1="200" y1="150" x2="245" y2="176"/>
+  </g>
+  <circle cx="200" cy="150" r="14" fill="#ffffff"/>
+  <g fill="#ffffff" opacity="0.9">
+    <path d="M330 60 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4z"/>
+    <path d="M70 210 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z"/>
+  </g>
+</svg>
