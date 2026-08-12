@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Set the theme attribute before anything paints, so the dashboard never
+     flashes the wrong theme on load. Must stay inline and stay first. -->
+<script>
+(function () {
+  try {
+    var t = localStorage.getItem('ss_admin_theme');
+    if (t !== 'light' && t !== 'dark') { t = 'dark'; }
+    document.documentElement.setAttribute('data-theme', t);
+  } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
+})();
+</script>
+<title>Admin Dashboard | Southern Suds Mobile Detailing</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="booking-v2.css">
+</head>
+<body class="admin-body">
+
+<div class="dev-banner" id="admin-demo-banner" hidden>🧪 DEMO MODE — showing local test data from this browser only.</div>
+
+<div class="admin-shell" id="admin-shell" hidden>
+  <div class="admin-sidebar-backdrop" id="admin-sidebar-backdrop"></div>
+
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="admin-sidebar-brand">
+      <img src="images/logo.png" alt="" class="admin-sidebar-logo">
+      <span>Southern Suds Admin</span>
+    </div>
+    <nav class="admin-nav" id="admin-nav">
+      <button type="button" class="admin-nav-item is-active" data-view-target="dashboard">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="3" width="8" height="5" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="12" width="8" height="9" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="15" width="8" height="6" rx="1.5" stroke="currentColor" stroke-width="1.8"/></svg>
+        Dashboard
+      </button>
+      <button type="button" class="admin-nav-item" data-view-target="bookings">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Bookings
+      </button>
+      <button type="button" class="admin-nav-item" data-view-target="calendar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 9h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Calendar
+      </button>
+      <button type="button" class="admin-nav-item" data-view-target="customers">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 8.5a3 3 0 1 1 3.6 2.94M17 14c2.2.3 4 2 4 4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Customers
+      </button>
+      <button type="button" class="admin-nav-item" data-view-target="gallery">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.6"/><path d="m4 17 5-5 4 4 3-3 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Gallery
+      </button>
+      <button type="button" class="admin-nav-item" data-view-target="notifications">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 13 6 9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9.5 17a2.5 2.5 0 0 0 5 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Notifications
+        <span class="admin-nav-badge" id="admin-nav-unread-badge" hidden>0</span>
+      </button>
+      <button type="button" class="admin-nav-item" data-view-target="settings">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l1.9-1.5-2-3.4-2.3.6a7.6 7.6 0 0 0-2.6-1.5L14 2h-4l-.4 2.7a7.6 7.6 0 0 0-2.6 1.5l-2.3-.6-2 3.4L4.6 10.5a7.6 7.6 0 0 0 0 3l-1.9 1.5 2 3.4 2.3-.6a7.6 7.6 0 0 0 2.6 1.5L10 22h4l.4-2.7a7.6 7.6 0 0 0 2.6-1.5l2.3.6 2-3.4-1.9-1.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        Settings
+      </button>
+    </nav>
+    <button type="button" class="admin-nav-item admin-nav-logout" id="admin-logout-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Logout
+    </button>
+  </aside>
+
+  <div class="admin-content-wrap">
+    <header class="admin-topbar">
+      <button type="button" class="admin-hamburger" id="admin-hamburger" aria-label="Open menu">☰</button>
+      <h1 class="admin-topbar-title" id="admin-topbar-title">Dashboard</h1>
+      <div class="admin-topbar-actions">
+        <div class="admin-search">
+          <input type="search" id="admin-search-input" placeholder="Search name, phone, email, or booking ID…">
+        </div>
+        <button type="button" class="admin-theme-toggle" id="admin-theme-toggle" aria-label="Toggle light/dark mode">🌙</button>
+        <div class="admin-bell-wrap">
+          <button type="button" class="admin-bell-btn" id="admin-bell-btn" aria-label="Notifications">
+            🔔<span class="admin-bell-badge" id="admin-bell-badge" hidden>0</span>
+          </button>
+          <div class="admin-bell-dropdown" id="admin-bell-dropdown" hidden>
+            <div class="admin-bell-dropdown-header">
+              <span>Notifications</span>
+              <button type="button" class="modal-inline-link" id="admin-bell-mark-all">Mark all read</button>
+            </div>
+            <div id="admin-bell-dropdown-list"></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-main-content">
+
+      <section class="admin-view" data-view="dashboard" id="view-dashboard">
+        <div class="admin-summary-grid" id="admin-summary-grid"></div>
+        <div class="admin-section-title">Needs Your Attention</div>
+        <div class="admin-row-list" id="admin-pending-list"></div>
+        <div class="admin-section-title">Upcoming Appointments</div>
+        <div class="admin-row-list" id="admin-upcoming-list"></div>
+        <div class="admin-section-title">Recent Bookings</div>
+        <div class="admin-row-list" id="admin-recent-list"></div>
+      </section>
+
+      <section class="admin-view" data-view="bookings" id="view-bookings" hidden>
+        <div class="admin-toolbar">
+          <div class="admin-filter-tabs" id="admin-filter-tabs">
+            <button type="button" class="admin-filter-tab is-active" data-status="all">All</button>
+            <button type="button" class="admin-filter-tab" data-status="pending">Pending</button>
+            <button type="button" class="admin-filter-tab" data-status="confirmed">Confirmed</button>
+            <button type="button" class="admin-filter-tab" data-status="completed">Completed</button>
+            <button type="button" class="admin-filter-tab" data-status="declined">Declined</button>
+            <button type="button" class="admin-filter-tab" data-status="cancelled">Cancelled</button>
+          </div>
+          <button type="button" class="btn btn-secondary" id="admin-refresh-btn">Refresh</button>
+        </div>
+        <p id="admin-empty-msg" style="color: var(--a-text-muted);" hidden>No booking requests in this view yet.</p>
+        <div class="admin-booking-list" id="admin-booking-list"></div>
+      </section>
+
+      <section class="admin-view" data-view="calendar" id="view-calendar" hidden>
+        <div class="admin-calendar-header">
+          <button type="button" class="admin-calendar-nav-btn" id="admin-cal-prev">‹</button>
+          <span class="admin-calendar-month-label" id="admin-cal-label"></span>
+          <button type="button" class="admin-calendar-nav-btn" id="admin-cal-next">›</button>
+        </div>
+        <div class="admin-calendar-grid" id="admin-cal-grid"></div>
+        <div class="admin-calendar-day-detail" id="admin-cal-day-detail"></div>
+      </section>
+
+      <section class="admin-view" data-view="customers" id="view-customers" hidden>
+        <div class="admin-customer-list" id="admin-customer-list"></div>
+      </section>
+
+      <section class="admin-view" data-view="gallery" id="view-gallery" hidden>
+        <div class="admin-toolbar">
+          <div class="admin-filter-tabs" id="admin-gallery-filter-tabs">
+            <button type="button" class="admin-filter-tab is-active" data-cat="all">All</button>
+            <button type="button" class="admin-filter-tab" data-cat="before">Before</button>
+            <button type="button" class="admin-filter-tab" data-cat="after">After</button>
+            <button type="button" class="admin-filter-tab" data-cat="damage">Damage</button>
+            <button type="button" class="admin-filter-tab" data-cat="other">Other</button>
+          </div>
+        </div>
+        <div class="admin-gallery-grid" id="admin-gallery-grid"></div>
+      </section>
+
+      <section class="admin-view" data-view="notifications" id="view-notifications" hidden>
+        <div class="admin-toolbar">
+          <span style="color:var(--a-text-muted); font-size: var(--fs-sm);">Unread booking requests</span>
+          <button type="button" class="btn btn-secondary" id="admin-notif-mark-all">Mark all as read</button>
+        </div>
+        <div class="admin-row-list" id="admin-notif-list"></div>
+      </section>
+
+      <section class="admin-view" data-view="settings" id="view-settings" hidden>
+        <div class="admin-detail-field" style="max-width:480px;">
+          <span class="k">Signed in as</span>
+          <span class="v" id="admin-settings-email">—</span>
+        </div>
+        <div class="admin-section-title">Appearance</div>
+        <p style="color:var(--a-text-muted); font-size:var(--fs-sm); max-width:480px;">Use the sun/moon icon in the top bar to switch between Day Mode and Night Mode. Your choice is remembered on this device.</p>
+        <div class="admin-section-title">About</div>
+        <p style="color:var(--a-text-muted); font-size:var(--fs-sm); max-width:480px;">Southern Suds Booking System v2 — local preview build. Not yet deployed to the live site.</p>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<div class="admin-login-box" id="admin-login-box">
+  <h2>Admin Login</h2>
+  <p>Sign in with your Southern Suds admin account to view and manage booking requests.</p>
+  <form id="admin-login-form" novalidate>
+    <div class="form-group">
+      <label for="admin-email">Email</label>
+      <input type="email" id="admin-email" required autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label for="admin-password">Password</label>
+      <input type="password" id="admin-password" required autocomplete="current-password">
+    </div>
+    <p class="field-error" id="admin-login-error" role="alert"></p>
+    <button type="submit" class="btn btn-primary btn-block">Log In</button>
+  </form>
+</div>
+
+<!-- Booking detail modal -->
+<div class="modal-overlay" id="admin-detail-modal" role="dialog" aria-modal="true" hidden>
+  <div class="modal-box admin-detail-box" id="admin-detail-box"></div>
+</div>
+
+<!-- Generic confirm modal -->
+<div class="modal-overlay" id="admin-confirm-modal" role="dialog" aria-modal="true" hidden>
+  <div class="modal-box admin-confirm-box">
+    <p id="admin-confirm-message"></p>
+    <div class="admin-confirm-actions">
+      <button type="button" class="btn btn-secondary" id="admin-confirm-cancel">Cancel</button>
+      <button type="button" class="btn btn-primary" id="admin-confirm-ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Photo lightbox -->
+<div class="admin-lightbox" id="admin-lightbox" hidden>
+  <button type="button" class="admin-lightbox-close" id="admin-lightbox-close" aria-label="Close">&times;</button>
+  <img id="admin-lightbox-img" src="" alt="Full-size photo">
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
+<script src="booking-shared.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
