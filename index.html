@@ -39,6 +39,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="booking-v2.css">
 
 <!-- ============================================================
      STRUCTURED DATA — LocalBusiness / AutoDetailing schema
@@ -936,373 +937,207 @@
       <div class="section-heading reveal">
         <span class="eyebrow">Book Your Detail</span>
         <h2 id="booking-heading">Request Your Appointment</h2>
-        <p class="section-sub">Fill out the form below and we'll follow up to confirm your appointment and final pricing.</p>
+        <p class="section-sub">Choose your service, tell us about your vehicle, and pick a time that works — we'll follow up to confirm.</p>
       </div>
 
-      <div class="booking-steps reveal" id="booking-steps">
-        <div class="booking-step-dot is-active" data-step-dot="1">
-          <span class="booking-step-num">1</span>
-          <span class="booking-step-label">Your Info</span>
-        </div>
+      <div class="booking-steps reveal" id="booking-v2-steps">
+        <div class="booking-step-dot is-active" data-step-dot="1"><span class="booking-step-num">1</span><span class="booking-step-label">Service</span></div>
         <div class="booking-step-line"></div>
-        <div class="booking-step-dot" data-step-dot="2">
-          <span class="booking-step-num">2</span>
-          <span class="booking-step-label">Vehicle</span>
-        </div>
+        <div class="booking-step-dot" data-step-dot="2"><span class="booking-step-num">2</span><span class="booking-step-label">Your Info</span></div>
         <div class="booking-step-line"></div>
-        <div class="booking-step-dot" data-step-dot="3">
-          <span class="booking-step-num">3</span>
-          <span class="booking-step-label">Service</span>
-        </div>
+        <div class="booking-step-dot" data-step-dot="3"><span class="booking-step-num">3</span><span class="booking-step-label">Schedule</span></div>
         <div class="booking-step-line"></div>
-        <div class="booking-step-dot" data-step-dot="4">
-          <span class="booking-step-num">4</span>
-          <span class="booking-step-label">Schedule</span>
-        </div>
+        <div class="booking-step-dot" data-step-dot="4"><span class="booking-step-num">4</span><span class="booking-step-label">Review</span></div>
       </div>
 
-      <form id="booking-form" class="booking-form reveal" novalidate>
+      <form id="bkv2-form" class="booking-form reveal" novalidate>
 
-        <!-- STEP 1 — Your Info -->
+        <!-- STEP 1 — Service, vehicle, price -->
         <div class="booking-step" data-step="1">
           <fieldset class="form-fieldset">
-            <legend>Contact Information</legend>
-            <div class="form-grid">
-              <div class="form-group">
-                <label for="full-name">Full Name <span class="req">*</span></label>
-                <input type="text" id="full-name" name="fullName" required autocomplete="name">
-                <span class="field-error" id="err-full-name"></span>
-              </div>
-              <div class="form-group">
-                <label for="phone">Phone Number <span class="req">*</span></label>
-                <input type="tel" id="phone" name="phone" required autocomplete="tel" placeholder="(555) 555-5555">
-                <span class="field-error" id="err-phone"></span>
-              </div>
-              <div class="form-group">
-                <label for="email">Email <span class="req">*</span></label>
-                <input type="email" id="email" name="email" required autocomplete="email">
-                <span class="field-error" id="err-email"></span>
-              </div>
-              <div class="form-group">
-                <label for="service-city">City / Service Area <span class="req">*</span></label>
-                <select id="service-city" name="serviceCity" required>
-                  <option value="">Select your city</option>
-                  <option value="Houston">Houston (Primary Service Area)</option>
-                  <option value="Katy">Katy</option>
-                  <option value="Cypress">Cypress</option>
-                  <option value="Sugar Land">Sugar Land</option>
-                  <option value="Pearland">Pearland</option>
-                  <option value="Pasadena">Pasadena</option>
-                  <option value="Missouri City">Missouri City</option>
-                  <option value="Richmond">Richmond</option>
-                  <option value="Rosenberg">Rosenberg</option>
-                  <option value="Spring">Spring</option>
-                  <option value="Tomball">Tomball</option>
-                  <option value="The Woodlands">The Woodlands</option>
-                  <option value="Humble">Humble</option>
-                  <option value="Jersey Village">Jersey Village</option>
-                  <option value="Bellaire">Bellaire</option>
-                  <option value="West University Place">West University Place</option>
-                  <option value="Friendswood">Friendswood</option>
-                  <option value="League City">League City</option>
-                  <option value="Baytown">Baytown</option>
-                  <option value="Deer Park">Deer Park</option>
-                  <option value="Stafford">Stafford</option>
-                  <option value="Other">Other / Not Listed</option>
-                </select>
-                <span class="field-error" id="err-service-city"></span>
-              </div>
-              <div class="form-group">
-                <label for="address">Address or ZIP Code <span class="req">*</span></label>
-                <input type="text" id="address" name="address" required autocomplete="postal-code" placeholder="Street address, or ZIP if city isn't listed above">
-                <span class="field-error" id="err-address"></span>
-              </div>
-              <div class="form-group">
-                <label for="contact-method">Preferred Contact Method <span class="req">*</span></label>
-                <select id="contact-method" name="contactMethod" required>
-                  <option value="">Select one</option>
-                  <option value="phone">Phone Call</option>
-                  <option value="text">Text Message</option>
-                  <option value="email">Email</option>
-                </select>
-                <span class="field-error" id="err-contact-method"></span>
-              </div>
-            </div>
-          </fieldset>
-          <div class="booking-step-nav">
-            <button type="button" class="btn btn-primary btn-block booking-next-btn" data-step-next="2">Continue: Vehicle Details</button>
-          </div>
-        </div>
-
-        <!-- STEP 2 — Vehicle Details -->
-        <div class="booking-step" data-step="2" hidden>
-          <fieldset class="form-fieldset">
-            <legend>Tell Us About Your Vehicle</legend>
-            <div class="form-grid">
-              <div class="form-group">
-                <label for="vehicle-year">Vehicle Year <span class="req">*</span></label>
-                <input type="text" id="vehicle-year" name="vehicleYear" required inputmode="numeric" placeholder="2021">
-                <span class="field-error" id="err-vehicle-year"></span>
-              </div>
-              <div class="form-group">
-                <label for="vehicle-make">Vehicle Make <span class="req">*</span></label>
-                <input type="text" id="vehicle-make" name="vehicleMake" required placeholder="Ford">
-                <span class="field-error" id="err-vehicle-make"></span>
-              </div>
-              <div class="form-group">
-                <label for="vehicle-model">Vehicle Model <span class="req">*</span></label>
-                <input type="text" id="vehicle-model" name="vehicleModel" required placeholder="F-150">
-                <span class="field-error" id="err-vehicle-model"></span>
-              </div>
-              <div class="form-group">
-                <label for="vehicle-type">Vehicle Type <span class="req">*</span></label>
-                <select id="vehicle-type" name="vehicleType" required>
-                  <option value="">Select vehicle type</option>
-                  <option value="coupe">Coupe</option>
-                  <option value="sedan">Sedan</option>
-                  <option value="hatchback">Hatchback</option>
-                  <option value="small-suv">Small SUV</option>
-                  <option value="mid-suv">Mid-Size SUV</option>
-                  <option value="large-suv">Large SUV</option>
-                  <option value="truck">Pickup Truck</option>
-                  <option value="long-bed-truck">Long Bed Truck</option>
-                  <option value="van">Van</option>
-                  <option value="commercial">Commercial Vehicle</option>
-                </select>
-                <span class="field-error" id="err-vehicle-type"></span>
-              </div>
-              <div class="form-group">
-                <label for="vehicle-condition">Vehicle Condition <span class="req">*</span></label>
-                <select id="vehicle-condition" name="vehicleCondition" required>
-                  <option value="">Select condition</option>
-                  <option value="excellent">Excellent</option>
-                  <option value="good">Good</option>
-                  <option value="moderate">Moderate Dirt</option>
-                  <option value="heavy">Heavy Dirt</option>
-                  <option value="restoration">Severe Restoration Needed</option>
-                </select>
-                <span class="field-error" id="err-vehicle-condition"></span>
-              </div>
-              <div class="form-group">
-                <label for="pet-hair">Pet Hair Present? <span class="req">*</span></label>
-                <select id="pet-hair" name="petHair" required>
-                  <option value="">Select one</option>
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
-                </select>
-                <span class="field-error" id="err-pet-hair"></span>
-              </div>
-              <div class="form-group">
-                <label for="stains">Major Stains Present? <span class="req">*</span></label>
-                <select id="stains" name="stains" required>
-                  <option value="">Select one</option>
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
-                </select>
-                <span class="field-error" id="err-stains"></span>
-              </div>
-              <div class="form-group">
-                <label for="odor">Odor Concerns? <span class="req">*</span></label>
-                <select id="odor" name="odor" required>
-                  <option value="">Select one</option>
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
-                </select>
-                <span class="field-error" id="err-odor"></span>
-              </div>
-            </div>
-          </fieldset>
-          <div class="booking-step-nav">
-            <button type="button" class="btn btn-secondary booking-back-btn" data-step-back="1">Back</button>
-            <button type="button" class="btn btn-primary booking-next-btn" data-step-next="3">Continue: Choose Service</button>
-          </div>
-        </div>
-
-        <!-- STEP 3 — Choose Your Service -->
-        <div class="booking-step" data-step="3" hidden>
-          <fieldset class="form-fieldset">
             <legend>Choose Your Service</legend>
+
             <div class="form-group form-group-full">
-              <label for="selected-package">Selected Package <span class="req">*</span></label>
-              <select id="selected-package" name="selectedPackage" required>
-                <option value="">Select a package or service</option>
-                <option value="Southern Wash">Southern Wash — Starting at $99</option>
-                <option value="Southern Standard Refresh">Southern Standard Refresh</option>
-                <option value="Interior Detailing - Level 1">Interior Detailing — Level 1 — Base Interior Maintenance</option>
-                <option value="Interior Detailing - Level 2">Interior Detailing — Level 2 — Moderate Interior Detail</option>
-                <option value="Interior Detailing - Level 3">Interior Detailing — Level 3 — Extreme Interior Detail</option>
-                <option value="Full Southern Detail">Full Southern Detail</option>
-                <option value="Full Restoration Detail">Full Restoration Detail</option>
-                <option value="Ceramic Protection">Ceramic Protection — $599</option>
-                <option value="Pet-Hair Removal">Pet-Hair Removal — $89</option>
-                <option value="Stain and Spill Treatment">Stain Removal — $129</option>
-                <option value="Odor Treatment - Level 1">Odor Treatment — Level 1 — $149.99</option>
-                <option value="Odor Treatment - Level 2">Odor Treatment — Level 2 — $249.99</option>
-                <option value="Engine Bay Cleaning">Engine Bay Cleaning — $150</option>
-                <option value="Headlight Restoration">Headlight Restoration — $200</option>
-                <option value="Fleet and Commercial Detailing">Fleet and Commercial Detailing — Custom Quote</option>
-                <option value="Mold Removal - Free Inspection">Mold Removal — Free Inspection</option>
-                <option value="Mold Remediation - Level 1">Mold Removal — Level 1 — $399</option>
-                <option value="Mold Remediation - Level 2">Mold Removal — Level 2 — $599</option>
-                <option value="Mold Remediation - Level 3">Mold Removal — Level 3 — $899</option>
-                <option value="Mold Remediation - Level 4">Mold Removal — Level 4 — $1,240</option>
-                <option value="Monthly Refresh Plan">Monthly Refresh Plan</option>
-                <option value="Biweekly Care Plan">Biweekly Care Plan</option>
-                <option value="Custom Fleet Plan">Custom Fleet Plan</option>
-                <option value="Not Sure">Not Sure / Need Help Choosing</option>
+              <label for="bkv2-service">Service <span class="req">*</span></label>
+              <select id="bkv2-service" required>
+                <option value="">Select a service</option>
+                <optgroup label="Detailing Packages">
+                  <option value="southern-wash">Southern Wash — Starting at $99</option>
+                  <option value="standard-refresh">Southern Standard Refresh</option>
+                  <option value="full-detail">Full Southern Detail</option>
+                  <option value="full-restoration">Full Restoration Detail</option>
+                </optgroup>
+                <optgroup label="Interior Detailing">
+                  <option value="interior-1">Interior — Level 1 (Base Maintenance)</option>
+                  <option value="interior-2">Interior — Level 2 (Moderate Detail)</option>
+                  <option value="interior-3">Interior — Level 3 (Extreme Detail) — Starting at $289</option>
+                </optgroup>
+                <optgroup label="Specialty Services">
+                  <option value="ceramic">Ceramic Protection — $599</option>
+                  <option value="pet-hair">Pet-Hair Removal — Starting at $89</option>
+                  <option value="stain-removal">Stain &amp; Spill Treatment — $129</option>
+                  <option value="odor-1">Odor Treatment — Level 1 — $149.99</option>
+                  <option value="odor-2">Odor Treatment — Level 2 — $249.99</option>
+                  <option value="engine-bay">Engine Bay Cleaning — $150</option>
+                  <option value="headlight">Headlight Restoration — $200</option>
+                </optgroup>
+                <optgroup label="Mold Remediation">
+                  <option value="mold-free">Mold Removal — Free Inspection</option>
+                  <option value="mold-1">Mold Remediation — Level 1 — $399</option>
+                  <option value="mold-2">Mold Remediation — Level 2 — $599</option>
+                  <option value="mold-3">Mold Remediation — Level 3 — $899</option>
+                  <option value="mold-4">Mold Remediation — Level 4 — $1,240</option>
+                </optgroup>
+                <optgroup label="Maintenance Plans">
+                  <option value="monthly-refresh">Monthly Refresh Plan</option>
+                  <option value="biweekly-care">Biweekly Care Plan</option>
+                  <option value="custom-fleet">Custom Fleet Plan</option>
+                </optgroup>
+                <optgroup label="Other">
+                  <option value="fleet">Fleet &amp; Commercial Detailing — Custom Quote</option>
+                  <option value="not-sure">Not Sure / Need Help Choosing</option>
+                </optgroup>
               </select>
-              <span class="field-error" id="err-selected-package"></span>
+              <span class="field-error" id="err-bkv2-service"></span>
             </div>
-            <div class="form-group form-group-full" id="vehicle-size-group" hidden>
-              <label for="vehicle-size">Vehicle Size <span class="req">*</span></label>
-              <select id="vehicle-size" name="vehicleSize">
+
+            <div class="form-group form-group-full" id="bkv2-size-group" hidden>
+              <label for="bkv2-size">Vehicle Size <span class="req">*</span></label>
+              <select id="bkv2-size">
                 <option value="">Select vehicle size</option>
                 <option value="compact">Compact Car</option>
                 <option value="full-size">Full-Size Car</option>
                 <option value="larger">Larger Vehicle / Truck</option>
               </select>
               <button type="button" class="modal-inline-link" data-modal="vehicle-size-modal">Which vehicle size is mine?</button>
-              <span class="field-error" id="err-vehicle-size"></span>
+              <span class="field-error" id="err-bkv2-size"></span>
+            </div>
+
+            <div class="form-group form-group-full">
+              <label for="bkv2-vehicle-type">Vehicle Type <span class="req">*</span></label>
+              <select id="bkv2-vehicle-type" required>
+                <option value="">Select vehicle type</option>
+                <option value="coupe">Coupe</option>
+                <option value="sedan">Sedan</option>
+                <option value="hatchback">Hatchback</option>
+                <option value="small-suv">Small SUV</option>
+                <option value="mid-suv">Mid-Size SUV</option>
+                <option value="large-suv">Large SUV</option>
+                <option value="truck">Pickup Truck</option>
+                <option value="long-bed-truck">Long Bed Truck</option>
+                <option value="van">Van</option>
+                <option value="commercial">Commercial Vehicle</option>
+              </select>
+              <span class="field-error" id="err-bkv2-vehicle-type"></span>
             </div>
           </fieldset>
 
-          <fieldset class="form-fieldset">
-            <legend>Add-On Services (Optional)</legend>
-            <p class="field-hint">Add any of these to your service — prices are added to your total.</p>
-            <div class="addon-checkbox-grid">
-              <label class="addon-checkbox">
-                <input type="checkbox" name="addons" value="Pet Hair Removal" data-price="89.99">
-                <span class="addon-checkbox-name">Pet Hair Removal</span>
-                <span class="addon-checkbox-price">$89.99</span>
-              </label>
-              <label class="addon-checkbox">
-                <input type="checkbox" name="addons" value="Engine Bay Cleaning" data-price="150">
-                <span class="addon-checkbox-name">Engine Bay Cleaning</span>
-                <span class="addon-checkbox-price">$150</span>
-              </label>
-              <label class="addon-checkbox">
-                <input type="checkbox" name="addons" value="Stain Removal" data-price="129.99">
-                <span class="addon-checkbox-name">Stain Removal</span>
-                <span class="addon-checkbox-price">$129.99</span>
-              </label>
-              <label class="addon-checkbox">
-                <input type="checkbox" name="addons" value="Odor Treatment - Level 1" data-price="149.99">
-                <span class="addon-checkbox-name">Odor Treatment — Level 1</span>
-                <span class="addon-checkbox-price">$149.99</span>
-              </label>
-              <label class="addon-checkbox">
-                <input type="checkbox" name="addons" value="Odor Treatment - Level 2" data-price="249.99">
-                <span class="addon-checkbox-name">Odor Treatment — Level 2</span>
-                <span class="addon-checkbox-price">$249.99</span>
-              </label>
-              <label class="addon-checkbox">
-                <input type="checkbox" name="addons" value="Leather Conditioning" data-price="79.99">
-                <span class="addon-checkbox-name">Leather Conditioning</span>
-                <span class="addon-checkbox-price">$79.99</span>
-              </label>
-              <label class="addon-checkbox">
-                <input type="checkbox" name="addons" value="Interior Shampoo" data-price="69.99">
-                <span class="addon-checkbox-name">Interior Shampoo</span>
-                <span class="addon-checkbox-price">$69.99</span>
-              </label>
-              <label class="addon-checkbox">
-                <input type="checkbox" name="addons" value="Carpet Extraction" data-price="129.99">
-                <span class="addon-checkbox-name">Carpet Extraction</span>
-                <span class="addon-checkbox-price">$129.99</span>
-              </label>
-              <label class="addon-checkbox">
-                <input type="checkbox" name="addons" value="Ceramic Spray Sealant" data-price="149.99">
-                <span class="addon-checkbox-name">Ceramic Spray Sealant</span>
-                <span class="addon-checkbox-price">$149.99</span>
-              </label>
-              <label class="addon-checkbox">
-                <input type="checkbox" name="addons" value="Headlight Restoration" data-price="200">
-                <span class="addon-checkbox-name">Headlight Restoration</span>
-                <span class="addon-checkbox-price">$200</span>
-              </label>
-              <label class="addon-checkbox">
-                <input type="checkbox" name="addons" value="Mold Inspection" data-price="0">
-                <span class="addon-checkbox-name">Mold Inspection</span>
-                <span class="addon-checkbox-price">FREE</span>
-              </label>
-            </div>
-          </fieldset>
+          <div class="service-summary-box" id="bkv2-price-box" hidden>
+            <h3>Estimated Price</h3>
+            <ul id="bkv2-price-list"></ul>
+          </div>
+
           <div class="booking-step-nav">
-            <button type="button" class="btn btn-secondary booking-back-btn" data-step-back="2">Back</button>
-            <button type="button" class="btn btn-primary booking-next-btn" data-step-next="4">Continue: Schedule</button>
+            <button type="button" class="btn btn-primary btn-block booking-next-btn" data-step-next="2">Continue: Your Info</button>
           </div>
         </div>
 
-        <!-- STEP 4 — Schedule & Review -->
-        <div class="booking-step" data-step="4" hidden>
+        <!-- STEP 2 — Contact info -->
+        <div class="booking-step" data-step="2" hidden>
+          <fieldset class="form-fieldset">
+            <legend>Your Info</legend>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="bkv2-name">Full Name <span class="req">*</span></label>
+                <input type="text" id="bkv2-name" required autocomplete="name">
+                <span class="field-error" id="err-bkv2-name"></span>
+              </div>
+              <div class="form-group">
+                <label for="bkv2-phone">Phone Number <span class="req">*</span></label>
+                <input type="tel" id="bkv2-phone" required autocomplete="tel" placeholder="(555) 555-5555">
+                <span class="field-error" id="err-bkv2-phone"></span>
+              </div>
+              <div class="form-group">
+                <label for="bkv2-email">Email <span class="req">*</span></label>
+                <input type="email" id="bkv2-email" required autocomplete="email">
+                <span class="field-error" id="err-bkv2-email"></span>
+              </div>
+              <div class="form-group form-group-full">
+                <label for="bkv2-address">Service Address <span class="req">*</span></label>
+                <input type="text" id="bkv2-address" required autocomplete="street-address" placeholder="Street address, city">
+                <span class="field-error" id="err-bkv2-address"></span>
+              </div>
+            </div>
+          </fieldset>
+          <div class="booking-step-nav">
+            <button type="button" class="btn btn-secondary booking-back-btn" data-step-back="1">Back</button>
+            <button type="button" class="btn btn-primary booking-next-btn" data-step-next="3">Continue: Schedule</button>
+          </div>
+        </div>
+
+        <!-- STEP 3 — Schedule + notes -->
+        <div class="booking-step" data-step="3" hidden>
           <fieldset class="form-fieldset">
             <legend>Schedule Your Appointment</legend>
             <div class="form-grid">
               <div class="form-group">
-                <label for="preferred-date">Preferred Date <span class="req">*</span></label>
-                <input type="date" id="preferred-date" name="preferredDate" required>
-                <span class="field-error" id="err-preferred-date"></span>
+                <label for="bkv2-date">Preferred Date <span class="req">*</span></label>
+                <input type="date" id="bkv2-date" required>
+                <span class="field-error" id="err-bkv2-date"></span>
               </div>
               <div class="form-group">
-                <label for="preferred-time">Preferred Time Window <span class="req">*</span></label>
-                <select id="preferred-time" name="preferredTime" required>
+                <label for="bkv2-time">Preferred Time Window <span class="req">*</span></label>
+                <select id="bkv2-time" required>
                   <option value="">Select a time window</option>
                   <option value="morning">Morning (8am–11am)</option>
                   <option value="midday">Midday (11am–2pm)</option>
                   <option value="afternoon">Afternoon (2pm–5pm)</option>
                   <option value="evening">Evening (5pm–7pm)</option>
                 </select>
-                <span class="field-error" id="err-preferred-time"></span>
+                <span class="field-error" id="err-bkv2-time"></span>
               </div>
             </div>
-
             <div class="form-group form-group-full">
-              <label for="additional-details">Additional Details</label>
-              <textarea id="additional-details" name="additionalDetails" rows="3" placeholder="Tell us anything else that would help us prepare for your appointment."></textarea>
+              <label for="bkv2-notes">Notes (Optional)</label>
+              <textarea id="bkv2-notes" rows="3" placeholder="Anything else that would help us prepare — vehicle condition, pet hair, stains, gate codes, etc."></textarea>
             </div>
-
             <div class="form-group form-group-full">
-              <label for="photo-upload">Vehicle Photos (Optional)</label>
-              <input type="file" id="photo-upload" name="photoUpload" accept="image/*" multiple>
-              <span class="field-hint">Upload photos of your vehicle's current condition to help us prepare an accurate quote.</span>
+              <label for="bkv2-photos">Photos (Optional)</label>
+              <input type="file" id="bkv2-photos" accept="image/jpeg,image/png,image/webp" multiple>
+              <span class="field-hint">Heavy stains, pet hair, mold, or damage? A few photos help us prepare an accurate quote — JPG, PNG, or WebP, up to 8MB each.</span>
+              <p class="field-error" id="err-bkv2-photos"></p>
+              <div class="photo-preview-grid" id="bkv2-photo-previews"></div>
             </div>
           </fieldset>
+          <div class="booking-step-nav">
+            <button type="button" class="btn btn-secondary booking-back-btn" data-step-back="2">Back</button>
+            <button type="button" class="btn btn-primary booking-next-btn" data-step-next="4">Review Request</button>
+          </div>
+        </div>
 
-          <div class="service-summary-box" id="service-summary-box" hidden>
+        <!-- STEP 4 — Review + submit -->
+        <div class="booking-step" data-step="4" hidden>
+          <div class="service-summary-box" id="bkv2-review-box">
             <h3>Review Your Request</h3>
-            <p>Here's what you're requesting. Your appointment will be reviewed to confirm the vehicle qualifies for this service level before the booking is finalized.</p>
-            <ul id="service-summary-list"></ul>
+            <p>Please confirm everything below is correct. This submits a <strong>request</strong> — we'll contact you to confirm availability and final pricing.</p>
+            <ul id="bkv2-review-list"></ul>
           </div>
 
-          <div class="form-group form-checkbox">
-            <input type="checkbox" id="price-ack" name="priceAck" required>
-            <label for="price-ack">I understand that online prices are estimates and final pricing will be confirmed before service begins. <span class="req">*</span></label>
-            <span class="field-error" id="err-price-ack"></span>
-          </div>
-
-          <div class="form-group form-checkbox">
-            <input type="checkbox" id="marketing-consent" name="marketingConsent">
-            <label for="marketing-consent">I give Southern Suds Mobile Detailing permission to use photos or videos of my vehicle for marketing and social media.</label>
-          </div>
-
-          <p class="field-error" id="booking-submit-error" role="alert" style="text-align:center;"></p>
+          <p class="field-error" id="bkv2-submit-error" role="alert" style="text-align:center;"></p>
 
           <div class="booking-step-nav">
             <button type="button" class="btn btn-secondary booking-back-btn" data-step-back="3">Back</button>
-            <button type="submit" class="btn btn-primary btn-lg" id="submit-booking">Request My Appointment</button>
+            <button type="submit" class="btn btn-primary btn-lg" id="bkv2-submit">Request My Appointment</button>
           </div>
         </div>
 
       </form>
 
-      <div class="form-confirmation" id="form-confirmation" role="status" aria-live="polite" hidden>
-        <img
-          src="images/logo.png"
-          alt="Southern Suds Mobile Detailing logo"
-          class="brand-logo brand-logo--confirm"
-          width="640" height="640" loading="lazy">
+      <div class="form-confirmation" id="bkv2-confirmation" role="status" aria-live="polite" hidden>
+        <img src="images/logo.png" alt="Southern Suds Mobile Detailing logo" class="brand-logo brand-logo--confirm" width="640" height="640" loading="lazy">
         <h3>Your appointment request has been received.</h3>
         <p>Southern Suds Mobile Detailing will review your requested date and time and contact you with confirmation. Need to reach us sooner? Call or text <a href="tel:+17132691708">(713) 269-1708</a>.</p>
+        <p id="bkv2-photo-status" hidden></p>
       </div>
 
       <!-- Direct contact alternatives -->
@@ -1688,5 +1523,9 @@
 </button>
 
 <script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
+<script src="booking-shared.js"></script>
+<script src="booking-new.js"></script>
 </body>
 </html>

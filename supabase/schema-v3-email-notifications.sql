@@ -47,9 +47,7 @@ begin
       '<li>Requested: ' || new.requested_date || ' — ' || new.requested_time || '</li>' ||
       '<li>Price: ' || price_text || '</li>' ||
     '</ul>' ||
-    -- Points at localhost during local testing. Update this to the real
-    -- domain once the admin dashboard is actually deployed.
-    '<p><a href="http://localhost:5500/admin.html">Open Admin Dashboard</a></p>';
+    '<p><a href="https://southernsudsmobiledetailing.com/admin.html">Open Admin Dashboard</a></p>';
 
   perform net.http_post(
     url := 'https://api.resend.com/emails',

@@ -55,6 +55,15 @@ on conflict (service_key) do update set
   compact_price = excluded.compact_price, full_size_price = excluded.full_size_price,
   larger_price = excluded.larger_price;
 
+-- Added for full parity with the old booking form's dropdown (which had a
+-- few quote-only options with no fixed price of their own).
+insert into public.service_pricing (service_key, name, tiered, is_quote, price_is_estimate, flat_price, compact_price, full_size_price, larger_price) values
+  ('mold-free',       'Mold Removal — Free Inspection', false, true, false, null, null, null, null),
+  ('monthly-refresh', 'Monthly Refresh Plan', false, true, false, null, null, null, null),
+  ('biweekly-care',   'Biweekly Care Plan', false, true, false, null, null, null, null),
+  ('custom-fleet',    'Custom Fleet Plan', false, true, false, null, null, null, null)
+on conflict (service_key) do update set name = excluded.name, is_quote = excluded.is_quote;
+
 alter table public.service_pricing enable row level security;
 drop policy if exists "anyone can read service pricing" on public.service_pricing;
 create policy "anyone can read service pricing"

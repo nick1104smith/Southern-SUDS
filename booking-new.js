@@ -348,5 +348,56 @@
     });
   });
 
+  /* ---- Package/service buttons elsewhere on the page ("Book Southern    */
+  /* Wash", "Book Ceramic Protection", etc.) — pre-fill the service picker  */
+  /* and scroll to it, same UX the old booking form had. Maps the old      */
+  /* human-readable data-package values (unchanged elsewhere in index.html)*/
+  /* to this system's service_key values.                                  */
+  var PACKAGE_NAME_TO_KEY = {
+    'Southern Wash': 'southern-wash',
+    'Southern Standard Refresh': 'standard-refresh',
+    'Full Southern Detail': 'full-detail',
+    'Full Restoration Detail': 'full-restoration',
+    'Interior Detailing - Level 1': 'interior-1',
+    'Interior Detailing - Level 2': 'interior-2',
+    'Interior Detailing - Level 3': 'interior-3',
+    'Ceramic Protection': 'ceramic',
+    'Pet-Hair Removal': 'pet-hair',
+    'Stain and Spill Treatment': 'stain-removal',
+    'Odor Treatment - Level 1': 'odor-1',
+    'Odor Treatment - Level 2': 'odor-2',
+    'Engine Bay Cleaning': 'engine-bay',
+    'Headlight Restoration': 'headlight',
+    'Fleet and Commercial Detailing': 'fleet',
+    'Mold Removal - Free Inspection': 'mold-free',
+    'Mold Remediation - Level 1': 'mold-1',
+    'Mold Remediation - Level 2': 'mold-2',
+    'Mold Remediation - Level 3': 'mold-3',
+    'Mold Remediation - Level 4': 'mold-4',
+    'Monthly Refresh Plan': 'monthly-refresh',
+    'Biweekly Care Plan': 'biweekly-care',
+    'Custom Fleet Plan': 'custom-fleet',
+    'Not Sure': 'not-sure'
+  };
+
+  function prefillFromPackageName(packageName) {
+    var key = PACKAGE_NAME_TO_KEY[packageName] || 'not-sure';
+    serviceField.value = key;
+    updatePrice();
+    serviceField.classList.add('field-flash');
+    setTimeout(function () { serviceField.classList.remove('field-flash'); }, 900);
+    goToStep(1);
+  }
+
+  document.querySelectorAll('[data-package]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      prefillFromPackageName(btn.getAttribute('data-package'));
+      if (btn.tagName === 'BUTTON') {
+        var bookingSection = document.getElementById('booking');
+        if (bookingSection) { bookingSection.scrollIntoView({ behavior: 'smooth' }); }
+      }
+    });
+  });
+
   goToStep(1);
 })();

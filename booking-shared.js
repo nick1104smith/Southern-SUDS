@@ -51,7 +51,11 @@ window.SSBooking = (function () {
     'mold-2':           { name: 'Mold Remediation — Level 2', price: 599 },
     'mold-3':           { name: 'Mold Remediation — Level 3', price: 899 },
     'mold-4':           { name: 'Mold Remediation — Level 4', price: 1240 },
+    'mold-free':        { name: 'Mold Removal — Free Inspection', quote: true },
     'fleet':            { name: 'Fleet & Commercial Detailing', quote: true },
+    'monthly-refresh':  { name: 'Monthly Refresh Plan', quote: true },
+    'biweekly-care':    { name: 'Biweekly Care Plan', quote: true },
+    'custom-fleet':     { name: 'Custom Fleet Plan', quote: true },
     'not-sure':         { name: 'Not Sure / Need Help Choosing', quote: true }
   };
 
