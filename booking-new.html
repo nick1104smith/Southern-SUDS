@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book Your Detail — New Booking System Preview | Southern Suds</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="booking-v2.css">
+</head>
+<body>
+
+<div class="dev-banner">🧪 New Booking System — local preview only. Not linked from the live site and no changes have been deployed.</div>
+
+<header class="site-header is-scrolled" style="position: relative;">
+  <nav class="navbar" aria-label="Primary navigation">
+    <a href="index.html" class="logo" aria-label="Southern Suds Mobile Detailing home">
+      <img src="images/logo.png" alt="Southern Suds Mobile Detailing logo" class="brand-logo brand-logo--nav" width="640" height="640">
+    </a>
+    <a href="index.html" class="btn btn-secondary">← Back to Site</a>
+  </nav>
+</header>
+
+<main id="main-content">
+  <section class="section section-dark" id="booking-v2" aria-labelledby="booking-v2-heading">
+    <div class="container container-narrow">
+      <div class="section-heading">
+        <span class="eyebrow">Book Your Detail</span>
+        <h1 id="booking-v2-heading" style="font-size: var(--fs-3xl);">Request Your Appointment</h1>
+        <p class="section-sub">Choose your service, tell us about your vehicle, and pick a time that works — we'll follow up to confirm.</p>
+      </div>
+
+      <div class="booking-steps" id="booking-v2-steps">
+        <div class="booking-step-dot is-active" data-step-dot="1"><span class="booking-step-num">1</span><span class="booking-step-label">Service</span></div>
+        <div class="booking-step-line"></div>
+        <div class="booking-step-dot" data-step-dot="2"><span class="booking-step-num">2</span><span class="booking-step-label">Your Info</span></div>
+        <div class="booking-step-line"></div>
+        <div class="booking-step-dot" data-step-dot="3"><span class="booking-step-num">3</span><span class="booking-step-label">Schedule</span></div>
+        <div class="booking-step-line"></div>
+        <div class="booking-step-dot" data-step-dot="4"><span class="booking-step-num">4</span><span class="booking-step-label">Review</span></div>
+      </div>
+
+      <form id="bkv2-form" class="booking-form" novalidate>
+
+        <!-- STEP 1 — Service, vehicle, price -->
+        <div class="booking-step" data-step="1">
+          <fieldset class="form-fieldset">
+            <legend>Choose Your Service</legend>
+
+            <div class="form-group form-group-full">
+              <label for="bkv2-service">Service <span class="req">*</span></label>
+              <select id="bkv2-service" required>
+                <option value="">Select a service</option>
+                <optgroup label="Detailing Packages">
+                  <option value="southern-wash">Southern Wash — Starting at $99</option>
+                  <option value="standard-refresh">Southern Standard Refresh</option>
+                  <option value="full-detail">Full Southern Detail</option>
+                  <option value="full-restoration">Full Restoration Detail</option>
+                </optgroup>
+                <optgroup label="Interior Detailing">
+                  <option value="interior-1">Interior — Level 1 (Base Maintenance)</option>
+                  <option value="interior-2">Interior — Level 2 (Moderate Detail)</option>
+                  <option value="interior-3">Interior — Level 3 (Extreme Detail) — Starting at $289</option>
+                </optgroup>
+                <optgroup label="Specialty Services">
+                  <option value="ceramic">Ceramic Protection — $599</option>
+                  <option value="pet-hair">Pet-Hair Removal — Starting at $89</option>
+                  <option value="stain-removal">Stain &amp; Spill Treatment — $129</option>
+                  <option value="odor-1">Odor Treatment — Level 1 — $149.99</option>
+                  <option value="odor-2">Odor Treatment — Level 2 — $249.99</option>
+                  <option value="engine-bay">Engine Bay Cleaning — $150</option>
+                  <option value="headlight">Headlight Restoration — $200</option>
+                </optgroup>
+                <optgroup label="Mold Remediation">
+                  <option value="mold-1">Mold Remediation — Level 1 — $399</option>
+                  <option value="mold-2">Mold Remediation — Level 2 — $599</option>
+                  <option value="mold-3">Mold Remediation — Level 3 — $899</option>
+                  <option value="mold-4">Mold Remediation — Level 4 — $1,240</option>
+                </optgroup>
+                <optgroup label="Other">
+                  <option value="fleet">Fleet &amp; Commercial Detailing — Custom Quote</option>
+                  <option value="not-sure">Not Sure / Need Help Choosing</option>
+                </optgroup>
+              </select>
+              <span class="field-error" id="err-bkv2-service"></span>
+            </div>
+
+            <div class="form-group form-group-full" id="bkv2-size-group" hidden>
+              <label for="bkv2-size">Vehicle Size <span class="req">*</span></label>
+              <select id="bkv2-size">
+                <option value="">Select vehicle size</option>
+                <option value="compact">Compact Car</option>
+                <option value="full-size">Full-Size Car</option>
+                <option value="larger">Larger Vehicle / Truck</option>
+              </select>
+              <button type="button" class="modal-inline-link" data-modal="bkv2-size-modal">Which vehicle size is mine?</button>
+              <span class="field-error" id="err-bkv2-size"></span>
+            </div>
+
+            <div class="form-group form-group-full">
+              <label for="bkv2-vehicle-type">Vehicle Type <span class="req">*</span></label>
+              <select id="bkv2-vehicle-type" required>
+                <option value="">Select vehicle type</option>
+                <option value="coupe">Coupe</option>
+                <option value="sedan">Sedan</option>
+                <option value="hatchback">Hatchback</option>
+                <option value="small-suv">Small SUV</option>
+                <option value="mid-suv">Mid-Size SUV</option>
+                <option value="large-suv">Large SUV</option>
+                <option value="truck">Pickup Truck</option>
+                <option value="long-bed-truck">Long Bed Truck</option>
+                <option value="van">Van</option>
+                <option value="commercial">Commercial Vehicle</option>
+              </select>
+              <span class="field-error" id="err-bkv2-vehicle-type"></span>
+            </div>
+          </fieldset>
+
+          <div class="service-summary-box" id="bkv2-price-box" hidden>
+            <h3>Estimated Price</h3>
+            <ul id="bkv2-price-list"></ul>
+          </div>
+
+          <div class="booking-step-nav">
+            <button type="button" class="btn btn-primary btn-block booking-next-btn" data-step-next="2">Continue: Your Info</button>
+          </div>
+        </div>
+
+        <!-- STEP 2 — Contact info -->
+        <div class="booking-step" data-step="2" hidden>
+          <fieldset class="form-fieldset">
+            <legend>Your Info</legend>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="bkv2-name">Full Name <span class="req">*</span></label>
+                <input type="text" id="bkv2-name" required autocomplete="name">
+                <span class="field-error" id="err-bkv2-name"></span>
+              </div>
+              <div class="form-group">
+                <label for="bkv2-phone">Phone Number <span class="req">*</span></label>
+                <input type="tel" id="bkv2-phone" required autocomplete="tel" placeholder="(555) 555-5555">
+                <span class="field-error" id="err-bkv2-phone"></span>
+              </div>
+              <div class="form-group">
+                <label for="bkv2-email">Email <span class="req">*</span></label>
+                <input type="email" id="bkv2-email" required autocomplete="email">
+                <span class="field-error" id="err-bkv2-email"></span>
+              </div>
+              <div class="form-group form-group-full">
+                <label for="bkv2-address">Service Address <span class="req">*</span></label>
+                <input type="text" id="bkv2-address" required autocomplete="street-address" placeholder="Street address, city">
+                <span class="field-error" id="err-bkv2-address"></span>
+              </div>
+            </div>
+          </fieldset>
+          <div class="booking-step-nav">
+            <button type="button" class="btn btn-secondary booking-back-btn" data-step-back="1">Back</button>
+            <button type="button" class="btn btn-primary booking-next-btn" data-step-next="3">Continue: Schedule</button>
+          </div>
+        </div>
+
+        <!-- STEP 3 — Schedule + notes -->
+        <div class="booking-step" data-step="3" hidden>
+          <fieldset class="form-fieldset">
+            <legend>Schedule Your Appointment</legend>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="bkv2-date">Preferred Date <span class="req">*</span></label>
+                <input type="date" id="bkv2-date" required>
+                <span class="field-error" id="err-bkv2-date"></span>
+              </div>
+              <div class="form-group">
+                <label for="bkv2-time">Preferred Time Window <span class="req">*</span></label>
+                <select id="bkv2-time" required>
+                  <option value="">Select a time window</option>
+                  <option value="morning">Morning (8am–11am)</option>
+                  <option value="midday">Midday (11am–2pm)</option>
+                  <option value="afternoon">Afternoon (2pm–5pm)</option>
+                  <option value="evening">Evening (5pm–7pm)</option>
+                </select>
+                <span class="field-error" id="err-bkv2-time"></span>
+              </div>
+            </div>
+            <div class="form-group form-group-full">
+              <label for="bkv2-notes">Notes (Optional)</label>
+              <textarea id="bkv2-notes" rows="3" placeholder="Anything else that would help us prepare — vehicle condition, pet hair, stains, gate codes, etc."></textarea>
+            </div>
+            <div class="form-group form-group-full">
+              <label for="bkv2-photos">Photos (Optional)</label>
+              <input type="file" id="bkv2-photos" accept="image/jpeg,image/png,image/webp" multiple>
+              <span class="field-hint">Heavy stains, pet hair, mold, or damage? A few photos help us prepare an accurate quote — JPG, PNG, or WebP, up to 8MB each.</span>
+              <p class="field-error" id="err-bkv2-photos"></p>
+              <div class="photo-preview-grid" id="bkv2-photo-previews"></div>
+            </div>
+          </fieldset>
+          <div class="booking-step-nav">
+            <button type="button" class="btn btn-secondary booking-back-btn" data-step-back="2">Back</button>
+            <button type="button" class="btn btn-primary booking-next-btn" data-step-next="4">Review Request</button>
+          </div>
+        </div>
+
+        <!-- STEP 4 — Review + submit -->
+        <div class="booking-step" data-step="4" hidden>
+          <div class="service-summary-box" id="bkv2-review-box">
+            <h3>Review Your Request</h3>
+            <p>Please confirm everything below is correct. This submits a <strong>request</strong> — we'll contact you to confirm availability and final pricing.</p>
+            <ul id="bkv2-review-list"></ul>
+          </div>
+
+          <p class="field-error" id="bkv2-submit-error" role="alert" style="text-align:center;"></p>
+
+          <div class="booking-step-nav">
+            <button type="button" class="btn btn-secondary booking-back-btn" data-step-back="3">Back</button>
+            <button type="submit" class="btn btn-primary btn-lg" id="bkv2-submit">Request My Appointment</button>
+          </div>
+        </div>
+
+      </form>
+
+      <div class="form-confirmation" id="bkv2-confirmation" role="status" aria-live="polite" hidden>
+        <img src="images/logo.png" alt="Southern Suds Mobile Detailing logo" class="brand-logo brand-logo--confirm" width="640" height="640" loading="lazy">
+        <h3>Your appointment request has been received.</h3>
+        <p>Southern Suds Mobile Detailing will review your requested date and time and contact you with confirmation. Need to reach us sooner? Call or text <a href="tel:+17132691708">(713) 269-1708</a>.</p>
+        <p id="bkv2-photo-status" hidden></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="modal-overlay" id="bkv2-size-modal" role="dialog" aria-modal="true" aria-labelledby="bkv2-size-modal-title" hidden>
+  <div class="modal-box">
+    <button type="button" class="modal-close" data-close-modal aria-label="Close">&times;</button>
+    <h3 id="bkv2-size-modal-title">Which vehicle size is mine?</h3>
+    <p><strong>Compact Cars</strong> — coupes, hatchbacks, and smaller sedans.</p>
+    <p><strong>Full-Size Cars</strong> — larger sedans and similarly sized passenger vehicles.</p>
+    <p><strong>Larger Vehicles / Trucks</strong> — SUVs, crossovers, pickup trucks, and similarly sized vehicles.</p>
+    <p>Unusually large vehicles, vans, three-row SUVs, or commercial vehicles vary widely — please contact Southern Suds before booking so we can confirm the correct pricing.</p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
+<script src="booking-shared.js"></script>
+<script src="booking-new.js"></script>
+</body>
+</html>
