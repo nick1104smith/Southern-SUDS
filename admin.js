@@ -10,6 +10,11 @@
 (function () {
   'use strict';
 
+  // Always start a fresh load of this page at the top (guards against the
+  // browser restoring a stale scroll position from bfcache on back/forward).
+  if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+  if (!window.location.hash) { window.scrollTo(0, 0); }
+
   var SS = window.SSBooking;
   if (!SS) { return; }
 
@@ -124,6 +129,11 @@
     navButtons.forEach(function (btn) { btn.classList.toggle('is-active', btn.getAttribute('data-view-target') === view); });
     topbarTitle.textContent = VIEW_TITLES[view] || 'Dashboard';
     closeSidebar();
+    // Sidebar sections aren't separate pages (no router — see admin.js's
+    // header comment) — the browser never resets scroll on its own here,
+    // so every "page" switch has to do it explicitly. Instant, not smooth:
+    // this is a navigation, not a within-page scroll a user should watch.
+    window.scrollTo(0, 0);
     renderCurrentView();
   }
   navButtons.forEach(function (btn) {
@@ -756,6 +766,10 @@
       '</div>';
 
     detailModal.hidden = false;
+    // .modal-box scrolls internally (max-height + overflow-y: auto) — reset
+    // it explicitly so reopening a booking (or opening a different one)
+    // never starts scrolled partway down from a previous view.
+    detailBox.scrollTop = 0;
     detailBox.querySelector('.modal-close').addEventListener('click', function () { detailModal.hidden = true; });
 
     detailBox.querySelectorAll('[data-action]').forEach(function (btn) {

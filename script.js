@@ -14,6 +14,16 @@
   'use strict';
 
   /* ------------------------------------------------------------------ */
+  /* Always start a fresh page load at the top. Browsers can otherwise    */
+  /* restore a stale scroll position from the back/forward cache          */
+  /* (bfcache) when navigating between pages. Skipped when the URL points */
+  /* at a specific in-page anchor (e.g. a #booking link), since jumping   */
+  /* to that section is the intended behavior there.                     */
+  /* ------------------------------------------------------------------ */
+  if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+  if (!window.location.hash) { window.scrollTo(0, 0); }
+
+  /* ------------------------------------------------------------------ */
   /* Footer year                                                        */
   /* ------------------------------------------------------------------ */
   var yearEl = document.getElementById('footer-year');

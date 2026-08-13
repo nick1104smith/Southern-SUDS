@@ -13,6 +13,12 @@
 (function () {
   'use strict';
 
+  // Always start a fresh load of this page at the top (guards against the
+  // browser restoring a stale scroll position from bfcache on back/forward).
+  // Harmless no-op when script.js already did this on the same page (index.html).
+  if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+  if (!window.location.hash) { window.scrollTo(0, 0); }
+
   var SS = window.SSBooking;
   var form = document.getElementById('bkv2-form');
   if (!SS || !form) { return; }
@@ -44,7 +50,13 @@
   // reference the booking they belong to immediately, without a round trip.
   var bookingId = SS.uuid();
 
-  function goToStep(n) {
+  // shouldScroll defaults to true (real step navigation should bring the
+  // stepper into view). The one-time initial call on page load passes
+  // false explicitly — this is just setting up UI state, not a user
+  // navigating, and the booking section sits far down the homepage now
+  // that this form lives in index.html, so scrolling here on load would
+  // yank the whole page down to it on every visit.
+  function goToStep(n, shouldScroll) {
     steps.forEach(function (s) { s.hidden = Number(s.getAttribute('data-step')) !== n; });
     stepDots.forEach(function (dot) {
       var d = Number(dot.getAttribute('data-step-dot'));
@@ -52,8 +64,10 @@
       dot.classList.toggle('is-complete', d < n);
     });
     if (n === 4) { renderReview(); }
-    var wrap = document.getElementById('booking-v2-steps');
-    if (wrap) { wrap.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    if (shouldScroll !== false) {
+      var wrap = document.getElementById('booking-v2-steps');
+      if (wrap) { wrap.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    }
   }
 
   function updatePrice() {
@@ -399,5 +413,5 @@
     });
   });
 
-  goToStep(1);
+  goToStep(1, false); // initial setup only — do not scroll the page on load
 })();
