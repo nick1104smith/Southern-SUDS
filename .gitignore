@@ -3,12 +3,9 @@ wordpress-theme/
 .DS_Store
 Thumbs.db
 
-# --- Push Notifications (Web Push/VAPID) — local-only until explicitly approved ---
-admin-manifest.json
-admin-sw.js
-supabase/schema-v4-push-notifications.sql
-supabase/edge-functions/send-push-notification/
+# CLI tooling artifacts only — not source, nothing to track.
+# supabase/functions/ is a duplicate of supabase/edge-functions/ content in
+# the layout the Supabase CLI expects for deploy; the real source of truth
+# is supabase/edge-functions/.
 supabase/functions/
 supabase/.temp/
-PUSH-NOTIFICATIONS-SETUP.md
-supabase/schema-v5-revenue.sql
