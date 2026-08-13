@@ -17,3 +17,10 @@
    ========================================================================== */
 window.SUPABASE_URL = 'https://gorphrtoafpbelbdffqd.supabase.co';
 window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvcnBocnRvYWZwYmVsYmRmZnFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0OTcwODcsImV4cCI6MjEwMjA3MzA4N30.Q6KsiakjJPxaCJV22DtQo9BExuForUCc6ixtaeH-WOE';
+
+// The VAPID "application server key" for Web Push. Like the anon key above,
+// this is meant to be public — it's what the browser's push service uses to
+// confirm push messages actually come from this app; the matching PRIVATE
+// key lives only in the send-push-notification Edge Function's secrets and
+// is never in any file that reaches the browser.
+window.VAPID_PUBLIC_KEY = 'BAbx_Z1O1mJ0R9zU0UYAGN41mugn-61iZx-R6ieAQp1cJg_FNxl1np8GhNxBD3z6UwiBmdn5I_Z53FBN4X_z8i4';

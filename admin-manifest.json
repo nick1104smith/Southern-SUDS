@@ -1,0 +1,14 @@
+{
+  "name": "Southern Suds Admin",
+  "short_name": "SS Admin",
+  "description": "Booking management dashboard for Southern Suds Mobile Detailing",
+  "start_url": "/admin.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a0a0a",
+  "theme_color": "#ef1b1b",
+  "icons": [
+    { "src": "images/logo.png", "sizes": "640x640", "type": "image/png", "purpose": "any" }
+  ]
+}

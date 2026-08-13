@@ -344,6 +344,125 @@
 .admin-detail-notes { background: var(--a-surface-2); border-radius: var(--radius-sm); padding: 0.9em; font-size: var(--fs-sm); margin-bottom: var(--space-md); white-space: pre-wrap; }
 .admin-detail-actions { display: flex; flex-wrap: wrap; gap: 0.6em; margin-bottom: var(--space-lg); }
 .admin-detail-actions .btn { font-size: var(--fs-sm); padding: 0.65em 1.2em; }
+
+/* ==========================================================================
+   REVENUE TAB
+   ========================================================================== */
+:root {
+  --rev-service: var(--a-accent-bright); /* Southern Suds red — already themed */
+  --rev-tip: #3987e5;                    /* validated against red: CVD safe both modes */
+}
+:root[data-theme="light"] { --rev-tip: #2a78d6; }
+
+@keyframes revFadeInUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+#view-revenue:not([hidden]) .admin-summary-card,
+#view-revenue:not([hidden]) .admin-revenue-card {
+  animation: revFadeInUp 0.32s ease both;
+}
+#view-revenue:not([hidden]) .admin-summary-card:nth-child(2) { animation-delay: 0.03s; }
+#view-revenue:not([hidden]) .admin-summary-card:nth-child(3) { animation-delay: 0.06s; }
+#view-revenue:not([hidden]) .admin-summary-card:nth-child(4) { animation-delay: 0.09s; }
+#view-revenue:not([hidden]) .admin-summary-card:nth-child(5) { animation-delay: 0.12s; }
+#view-revenue:not([hidden]) .admin-summary-card:nth-child(6) { animation-delay: 0.15s; }
+#view-revenue:not([hidden]) .admin-summary-card:nth-child(7) { animation-delay: 0.18s; }
+#view-revenue:not([hidden]) .admin-summary-card:nth-child(8) { animation-delay: 0.21s; }
+@media (prefers-reduced-motion: reduce) {
+  #view-revenue:not([hidden]) .admin-summary-card, #view-revenue:not([hidden]) .admin-revenue-card { animation: none; }
+}
+
+.admin-revenue-custom-range {
+  display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-sm);
+  background: var(--a-surface); border: 1px solid var(--a-border); border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md); margin-bottom: var(--space-md);
+}
+.admin-revenue-custom-range .form-group { margin-bottom: 0; }
+
+.admin-revenue-card {
+  background: var(--a-surface); border: 1px solid var(--a-border); border-radius: var(--radius-md);
+  padding: var(--space-md); margin-bottom: var(--space-lg); box-shadow: var(--a-shadow);
+}
+.admin-revenue-card-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-sm); margin-bottom: var(--space-sm); }
+.admin-revenue-card-header h3 { font-size: var(--fs-lg); margin: 0; }
+.admin-year-switcher { display: flex; align-items: center; gap: 0.6em; font-weight: 800; font-size: var(--fs-sm); }
+
+/* ---- Chart --------------------------------------------------------------- */
+.admin-revenue-chart-wrap { position: relative; }
+.admin-revenue-chart-legend { display: flex; gap: var(--space-md); margin-bottom: var(--space-sm); font-size: var(--fs-xs); font-weight: 700; color: var(--a-text-muted); }
+.admin-revenue-chart-legend-item { display: flex; align-items: center; gap: 0.4em; }
+.admin-revenue-chart-legend-swatch { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+.admin-revenue-bar-seg { cursor: pointer; transition: opacity var(--transition-fast); }
+.admin-revenue-bar-seg:hover, .admin-revenue-bar-seg.is-hovered { opacity: 0.82; }
+.admin-revenue-chart-axis-label { font-size: 10px; fill: var(--a-text-muted); }
+.admin-revenue-chart-grid { stroke: var(--a-border); stroke-width: 1; }
+.admin-revenue-tooltip {
+  position: absolute; pointer-events: none; z-index: 20;
+  background: var(--a-surface); border: 1px solid var(--a-border); border-radius: var(--radius-sm);
+  padding: 0.6em 0.8em; font-size: var(--fs-xs); box-shadow: var(--a-shadow); white-space: nowrap;
+  transform: translate(-50%, -100%); margin-top: -10px; opacity: 0; transition: opacity var(--transition-fast);
+}
+.admin-revenue-tooltip.is-visible { opacity: 1; }
+.admin-revenue-tooltip .rt-title { font-weight: 800; margin-bottom: 0.3em; }
+.admin-revenue-tooltip .rt-row { display: flex; justify-content: space-between; gap: 1em; }
+.admin-revenue-tooltip .rt-row .rt-val { font-weight: 700; color: var(--a-text); }
+
+/* ---- Monthly breakdown ----------------------------------------------------- */
+.admin-revenue-monthly-list { display: grid; gap: 0.5em; margin-bottom: var(--space-lg); }
+.admin-revenue-month-row {
+  display: grid; grid-template-columns: 1.2fr repeat(5, 1fr); gap: var(--space-sm); align-items: center;
+  background: var(--a-surface); border: 1px solid var(--a-border); border-radius: var(--radius-sm);
+  padding: 0.8em 1em; cursor: pointer; font-size: var(--fs-sm);
+}
+.admin-revenue-month-row:hover { border-color: var(--a-accent-bright); }
+.admin-revenue-month-row.is-expanded { border-color: var(--a-accent-bright); background: var(--a-surface-2); }
+.admin-revenue-month-row .rm-name { font-weight: 800; }
+.admin-revenue-month-row .rm-stat { display: flex; flex-direction: column; }
+.admin-revenue-month-row .rm-stat span.k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--a-text-muted); }
+.admin-revenue-month-row .rm-stat span.v { font-weight: 700; }
+.admin-revenue-month-jobs-panel { background: var(--a-surface-2); border-radius: var(--radius-sm); padding: var(--space-sm); margin: -0.3em 0 0.5em; }
+
+/* ---- Service / vehicle breakdown -------------------------------------------- */
+.admin-revenue-breakdown-list { display: grid; gap: 0.6em; margin-bottom: var(--space-lg); }
+.admin-revenue-breakdown-row {
+  background: var(--a-surface); border: 1px solid var(--a-border); border-radius: var(--radius-sm);
+  padding: 0.8em 1em;
+}
+.admin-revenue-breakdown-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5em; gap: var(--space-sm); }
+.admin-revenue-breakdown-top .rb-name { font-weight: 800; font-size: var(--fs-sm); }
+.admin-revenue-breakdown-top .rb-pct { font-size: var(--fs-xs); color: var(--a-text-muted); font-weight: 700; }
+.admin-revenue-breakdown-bar-track { height: 8px; border-radius: 999px; background: var(--a-surface-2); overflow: hidden; margin-bottom: 0.5em; }
+.admin-revenue-breakdown-bar-fill { height: 100%; background: var(--rev-service); border-radius: 999px; }
+.admin-revenue-breakdown-stats { display: flex; flex-wrap: wrap; gap: 1em; font-size: var(--fs-xs); color: var(--a-text-muted); }
+.admin-revenue-breakdown-stats strong { color: var(--a-text); font-weight: 700; }
+
+/* ---- Dashboard promo card --------------------------------------------------- */
+.admin-revenue-promo {
+  display: flex; align-items: center; justify-content: space-between; width: 100%;
+  background: var(--gradient-primary); border: none; border-radius: var(--radius-md);
+  padding: var(--space-md); margin-bottom: var(--space-lg); cursor: pointer; color: #fff;
+  box-shadow: var(--shadow-primary); transition: transform var(--transition-fast);
+}
+.admin-revenue-promo:hover { transform: translateY(-1px); }
+.admin-revenue-promo-label { display: block; font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.9; font-weight: 700; }
+.admin-revenue-promo-value { display: block; font-size: var(--fs-2xl); font-weight: 800; }
+.admin-revenue-promo-link { font-weight: 700; font-size: var(--fs-sm); white-space: nowrap; }
+
+/* ---- Payment summary + Complete Job modal ---------------------------------- */
+.admin-payment-summary { margin-bottom: var(--space-md); }
+.admin-payment-summary h4 { font-size: var(--fs-base); margin-bottom: 0.5em; }
+.admin-complete-total { font-size: var(--fs-lg); font-weight: 800; color: var(--a-accent-bright); margin: 0.8em 0; }
+
+/* ---- Settings: Push Notifications card ------------------------------------ */
+.admin-push-card {
+  background: var(--a-surface);
+  border: 1px solid var(--a-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  max-width: 480px;
+}
+.admin-push-status-row { display: flex; align-items: center; gap: 0.6em; font-size: var(--fs-sm); font-weight: 700; margin-bottom: 0.4em; }
+.admin-push-hint { color: var(--a-text-muted); font-size: var(--fs-xs); margin-bottom: var(--space-sm); }
+.admin-push-actions { display: flex; flex-wrap: wrap; gap: 0.6em; }
+#push-success { color: #2ecc71; font-size: var(--fs-xs); margin-top: 0.6em; }
 .btn-success { background: linear-gradient(135deg, #1fa35a, #2ecc71); color: #fff; border-color: rgba(46,204,113,0.5); }
 .btn-danger { background: transparent; color: var(--a-accent-bright); border-color: var(--a-accent-bright); }
 .btn-danger:hover { background: rgba(239,27,27,0.12); }
@@ -438,4 +557,13 @@
   .admin-card-actions { flex-direction: column; align-items: stretch; }
   .admin-status-select { width: 100%; }
   .admin-calendar-daycell { min-height: 56px; }
+
+  /* Revenue: no horizontally-scrolling tables — every row stacks instead. */
+  .admin-revenue-month-row {
+    grid-template-columns: 1fr 1fr; row-gap: 0.6em;
+  }
+  .admin-revenue-month-row .rm-name { grid-column: 1 / -1; font-size: var(--fs-base); }
+  .admin-revenue-card-header { align-items: flex-start; }
+  .admin-revenue-promo { flex-direction: column; align-items: flex-start; gap: 0.6em; }
+  .admin-revenue-custom-range { flex-direction: column; align-items: stretch; }
 }

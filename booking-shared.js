@@ -67,6 +67,9 @@ window.SSBooking = (function () {
   var PHOTO_CATEGORIES = ['before', 'after', 'damage', 'other'];
   var PHOTO_CATEGORY_LABELS = { before: 'Before', after: 'After', damage: 'Damage', other: 'Other' };
 
+  var PAYMENT_METHODS = ['cash', 'card', 'zelle', 'venmo', 'cashapp', 'other'];
+  var PAYMENT_METHOD_LABELS = { cash: 'Cash', card: 'Card', zelle: 'Zelle', venmo: 'Venmo', cashapp: 'Cash App', other: 'Other' };
+
   function formatMoney(amount) {
     if (amount === null || amount === undefined || isNaN(amount)) { return ''; }
     var rounded = Math.round(amount * 100) / 100;
@@ -302,6 +305,8 @@ window.SSBooking = (function () {
     STATUS_LABELS: STATUS_LABELS,
     PHOTO_CATEGORIES: PHOTO_CATEGORIES,
     PHOTO_CATEGORY_LABELS: PHOTO_CATEGORY_LABELS,
+    PAYMENT_METHODS: PAYMENT_METHODS,
+    PAYMENT_METHOD_LABELS: PAYMENT_METHOD_LABELS,
     formatMoney: formatMoney,
     priceFor: priceFor,
     demoGetAll: demoGetAll,
