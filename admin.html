@@ -17,6 +17,16 @@
 <title>Admin Dashboard | Southern Suds Mobile Detailing</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" type="image/png" href="images/logo.png">
+
+<!-- PWA: installable on a phone's home screen, standalone (no browser
+     chrome), with a service worker for push notifications. -->
+<link rel="manifest" href="admin-manifest.json">
+<meta name="theme-color" content="#ef1b1b">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SS Admin">
+<link rel="apple-touch-icon" href="images/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -51,6 +61,10 @@
       <button type="button" class="admin-nav-item" data-view-target="customers">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 8.5a3 3 0 1 1 3.6 2.94M17 14c2.2.3 4 2 4 4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
         Customers
+      </button>
+      <button type="button" class="admin-nav-item" data-view-target="revenue">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 21h18M6 21V10m6 11V4m6 17V13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Revenue
       </button>
       <button type="button" class="admin-nav-item" data-view-target="gallery">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.6"/><path d="m4 17 5-5 4 4 3-3 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -100,6 +114,13 @@
 
       <section class="admin-view" data-view="dashboard" id="view-dashboard">
         <div class="admin-summary-grid" id="admin-summary-grid"></div>
+        <button type="button" class="admin-revenue-promo" id="admin-revenue-promo-card">
+          <div>
+            <span class="admin-revenue-promo-label">Revenue This Month</span>
+            <span class="admin-revenue-promo-value" id="admin-revenue-promo-value">$0</span>
+          </div>
+          <span class="admin-revenue-promo-link">View Revenue →</span>
+        </button>
         <div class="admin-section-title">Needs Your Attention</div>
         <div class="admin-row-list" id="admin-pending-list"></div>
         <div class="admin-section-title">Upcoming Appointments</div>
@@ -138,6 +159,54 @@
         <div class="admin-customer-list" id="admin-customer-list"></div>
       </section>
 
+      <section class="admin-view" data-view="revenue" id="view-revenue" hidden>
+        <div class="admin-toolbar">
+          <div class="admin-filter-tabs" id="admin-revenue-filter-tabs">
+            <button type="button" class="admin-filter-tab is-active" data-range="this-month">This Month</button>
+            <button type="button" class="admin-filter-tab" data-range="last-month">Last Month</button>
+            <button type="button" class="admin-filter-tab" data-range="last-3-months">Last 3 Months</button>
+            <button type="button" class="admin-filter-tab" data-range="last-6-months">Last 6 Months</button>
+            <button type="button" class="admin-filter-tab" data-range="this-year">This Year</button>
+            <button type="button" class="admin-filter-tab" data-range="last-year">Last Year</button>
+            <button type="button" class="admin-filter-tab" data-range="custom">Custom Range</button>
+          </div>
+          <button type="button" class="btn btn-secondary" id="admin-revenue-export-btn">⬇ Export CSV</button>
+        </div>
+
+        <div class="admin-revenue-custom-range" id="admin-revenue-custom-range" hidden>
+          <div class="form-group"><label>From</label><input type="date" id="revenue-range-start"></div>
+          <div class="form-group"><label>To</label><input type="date" id="revenue-range-end"></div>
+          <button type="button" class="btn btn-primary" id="revenue-range-apply">Apply</button>
+        </div>
+
+        <div class="admin-summary-grid" id="admin-revenue-summary-grid"></div>
+
+        <div class="admin-revenue-card">
+          <div class="admin-revenue-card-header">
+            <h3>Monthly Revenue</h3>
+            <div class="admin-year-switcher">
+              <button type="button" class="admin-calendar-nav-btn" id="revenue-year-prev" aria-label="Previous year">‹</button>
+              <span id="revenue-year-label"></span>
+              <button type="button" class="admin-calendar-nav-btn" id="revenue-year-next" aria-label="Next year">›</button>
+            </div>
+          </div>
+          <div class="admin-revenue-chart-wrap" id="admin-revenue-chart-wrap"></div>
+        </div>
+
+        <div class="admin-section-title">Monthly Breakdown</div>
+        <div class="admin-revenue-monthly-list" id="admin-revenue-monthly-list"></div>
+        <div id="admin-revenue-month-jobs"></div>
+
+        <div class="admin-section-title">Revenue by Service</div>
+        <div class="admin-revenue-breakdown-list" id="admin-revenue-service-list"></div>
+
+        <div class="admin-section-title">Revenue by Vehicle Type</div>
+        <div class="admin-revenue-breakdown-list" id="admin-revenue-vehicle-list"></div>
+
+        <div class="admin-section-title">Recent Payments</div>
+        <div class="admin-booking-list" id="admin-revenue-recent-list"></div>
+      </section>
+
       <section class="admin-view" data-view="gallery" id="view-gallery" hidden>
         <div class="admin-toolbar">
           <div class="admin-filter-tabs" id="admin-gallery-filter-tabs">
@@ -166,6 +235,29 @@
         </div>
         <div class="admin-section-title">Appearance</div>
         <p style="color:var(--a-text-muted); font-size:var(--fs-sm); max-width:480px;">Use the sun/moon icon in the top bar to switch between Day Mode and Night Mode. Your choice is remembered on this device.</p>
+
+        <div class="admin-section-title">Push Notifications</div>
+        <div class="admin-push-card">
+          <div class="admin-push-status-row">
+            <span>Status on this device:</span>
+            <span class="status-badge" id="push-status-badge">Checking…</span>
+          </div>
+          <p class="admin-push-hint" id="push-status-hint"></p>
+          <div class="admin-push-actions">
+            <button type="button" class="btn btn-primary" id="push-enable-btn" hidden>Enable Booking Notifications</button>
+            <button type="button" class="btn btn-muted" id="push-disable-btn" hidden>Disable on This Device</button>
+            <button type="button" class="btn btn-secondary" id="push-test-btn" hidden>Send Test Notification</button>
+          </div>
+          <p class="field-error" id="push-error" role="alert"></p>
+          <p class="field-hint" id="push-success" role="status"></p>
+        </div>
+
+        <div class="admin-section-title">Registered Devices</div>
+        <div class="admin-row-list" id="push-device-list"></div>
+
+        <div class="admin-section-title">Install the Dashboard as an App</div>
+        <p style="color:var(--a-text-muted); font-size:var(--fs-sm); max-width:480px;">On your phone, use your browser's "Add to Home Screen" option (Safari: Share → Add to Home Screen. Chrome/Android: menu → Install app) to open Southern Suds Admin like a regular app, full-screen, with its own icon.</p>
+
         <div class="admin-section-title">About</div>
         <p style="color:var(--a-text-muted); font-size:var(--fs-sm); max-width:480px;">Southern Suds Booking System v2 — local preview build. Not yet deployed to the live site.</p>
       </section>
@@ -205,6 +297,11 @@
       <button type="button" class="btn btn-primary" id="admin-confirm-ok">Confirm</button>
     </div>
   </div>
+</div>
+
+<!-- Complete-job payment capture modal -->
+<div class="modal-overlay" id="admin-complete-modal" role="dialog" aria-modal="true" hidden>
+  <div class="modal-box admin-detail-box" id="admin-complete-box"></div>
 </div>
 
 <!-- Photo lightbox -->

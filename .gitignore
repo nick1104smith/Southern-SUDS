@@ -2,3 +2,13 @@
 wordpress-theme/
 .DS_Store
 Thumbs.db
+
+# --- Push Notifications (Web Push/VAPID) — local-only until explicitly approved ---
+admin-manifest.json
+admin-sw.js
+supabase/schema-v4-push-notifications.sql
+supabase/edge-functions/send-push-notification/
+supabase/functions/
+supabase/.temp/
+PUSH-NOTIFICATIONS-SETUP.md
+supabase/schema-v5-revenue.sql
