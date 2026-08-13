@@ -99,11 +99,36 @@ async function sendToSubscriptions(
   );
 }
 
+// The "Send Test Notification" button and (eventually) device registration
+// call this function directly from the browser via supabase-js, unlike the
+// database trigger's server-to-server pg_net call — a browser call is
+// subject to CORS, so every response (including the preflight) needs these
+// headers or the browser rejects it before our code ever runs, surfacing as
+// a generic "Failed to send a request to the Edge Function" with no other
+// detail. This was missing initially — the trigger path worked fine (no
+// CORS involved) which is why testing via curl/pg_net didn't catch it.
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS"
+};
+
+function jsonResponse(body: Record<string, unknown>, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...CORS_HEADERS, "Content-Type": "application/json" }
+  });
+}
+
 serve(async (req: Request) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: CORS_HEADERS });
+  }
+
   try {
     if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
       console.error("VAPID keys not configured — set them with `supabase secrets set`.");
-      return new Response(JSON.stringify({ ok: false, error: "VAPID keys not configured" }), { status: 200 });
+      return jsonResponse({ ok: false, error: "VAPID keys not configured" });
     }
 
     const body = await req.json().catch(() => ({}));
@@ -115,37 +140,37 @@ serve(async (req: Request) => {
       const scoped = createClient(SUPABASE_URL, ANON_KEY, { global: { headers: { Authorization: authHeader } } });
       const { data: subs, error } = await scoped.from("push_subscriptions").select("*");
       if (error) {
-        return new Response(JSON.stringify({ ok: false, error: error.message }), { status: 200 });
+        return jsonResponse({ ok: false, error: error.message });
       }
       if (!subs || subs.length === 0) {
-        return new Response(JSON.stringify({ ok: false, error: "No registered devices for this account." }), { status: 200 });
+        return jsonResponse({ ok: false, error: "No registered devices for this account." });
       }
       await sendToSubscriptions(subs as PushSubRow[], {
         title: "Southern Suds",
         body: "Test Notification\nYour booking notifications are working correctly.",
         url: "/admin.html"
       }, svc);
-      return new Response(JSON.stringify({ ok: true, sent: subs.length }), { status: 200 });
+      return jsonResponse({ ok: true, sent: subs.length });
     }
 
     // ---- Real booking notification path -----------------------------------
     const bookingId = body.booking_id;
     if (!bookingId) {
-      return new Response(JSON.stringify({ ok: false, error: "Missing booking_id" }), { status: 400 });
+      return jsonResponse({ ok: false, error: "Missing booking_id" }, 400);
     }
 
     const { data: booking, error: bookingErr } = await svc.from("bookings").select("*").eq("id", bookingId).single();
     if (bookingErr || !booking) {
-      return new Response(JSON.stringify({ ok: false, error: "Booking not found" }), { status: 200 });
+      return jsonResponse({ ok: false, error: "Booking not found" });
     }
     if (booking.push_notified_at) {
-      return new Response(JSON.stringify({ ok: true, skipped: "already notified" }), { status: 200 });
+      return jsonResponse({ ok: true, skipped: "already notified" });
     }
 
     const { data: subs, error: subsErr } = await svc.from("push_subscriptions").select("*");
     if (subsErr) {
       console.error("Could not load push subscriptions", subsErr.message);
-      return new Response(JSON.stringify({ ok: false, error: subsErr.message }), { status: 200 });
+      return jsonResponse({ ok: false, error: subsErr.message });
     }
 
     // Marked as handled BEFORE sending, so a slow or erroring send can't
@@ -160,9 +185,9 @@ serve(async (req: Request) => {
       }, svc);
     }
 
-    return new Response(JSON.stringify({ ok: true, sent: subs?.length ?? 0 }), { status: 200 });
+    return jsonResponse({ ok: true, sent: subs?.length ?? 0 });
   } catch (err) {
     console.error(err);
-    return new Response(JSON.stringify({ ok: false, error: String(err) }), { status: 500 });
+    return jsonResponse({ ok: false, error: String(err) }, 500);
   }
 });
