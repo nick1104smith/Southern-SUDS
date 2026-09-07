@@ -719,6 +719,7 @@
     if (b.status !== 'in_progress' && b.status !== 'completed') { buttons.push('<button type="button" class="btn btn-secondary" data-action="in_progress">Mark In Progress</button>'); }
     if (b.status !== 'completed') { buttons.push('<button type="button" class="btn btn-success" data-action="completed">Mark Completed</button>'); }
     buttons.push('<button type="button" class="btn btn-secondary" id="admin-reschedule-toggle">Reschedule</button>');
+    buttons.push('<button type="button" class="btn btn-secondary" id="admin-price-toggle">Edit Price</button>');
     buttons.push('<button type="button" class="btn btn-secondary" id="admin-contact-toggle">Contact Customer</button>');
     if (b.status !== 'declined') { buttons.push('<button type="button" class="btn btn-danger" data-action="declined">Decline</button>'); }
     if (b.status !== 'cancelled') { buttons.push('<button type="button" class="btn btn-muted" data-action="cancelled">Cancel Appointment</button>'); }
@@ -747,6 +748,24 @@
       '<div class="booking-step-nav" style="margin-top:0.8em;">' +
         '<button type="button" class="btn btn-secondary" id="admin-reschedule-cancel">Cancel</button>' +
         '<button type="button" class="btn btn-primary" id="admin-reschedule-save">Save New Time</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function priceFormHTML(b) {
+    // A plain price update never touches service_key/vehicle_size, so the
+    // server-side price-verification trigger doesn't even fire here — this
+    // just saves exactly what's typed, same as the fuller Edit Appointment
+    // form's price field, just one click away instead of buried in it.
+    return '<div class="admin-edit-form" id="admin-price-form" hidden>' +
+      '<div class="form-grid">' +
+        '<div class="form-group"><label>Original Quoted Price</label><input type="text" value="' + priceText(b) + '" disabled></div>' +
+        '<div class="form-group"><label>New Price ($)</label><input type="number" step="0.01" min="0" id="price-edit-value" value="' + (b.price !== null && b.price !== undefined ? escapeHtml(String(b.price)) : '') + '"></div>' +
+      '</div>' +
+      '<p class="field-hint">This updates the appointment\'s price on record. If the job is already completed, use Final Service Price / Tip instead so revenue reports stay accurate.</p>' +
+      '<div class="booking-step-nav" style="margin-top:0.8em;">' +
+        '<button type="button" class="btn btn-secondary" id="admin-price-cancel">Cancel</button>' +
+        '<button type="button" class="btn btn-primary" id="admin-price-save">Save Price</button>' +
       '</div>' +
     '</div>';
   }
@@ -1104,6 +1123,7 @@
         '<span class="admin-notes-saved" id="admin-notes-saved-msg" hidden>Saved ✓</span>' +
       '</div>' +
       rescheduleFormHTML(b) +
+      priceFormHTML(b) +
       contactMenuHTML(b) +
       '<div class="admin-edit-form" id="admin-edit-form" hidden>' +
         '<div class="form-grid">' +
@@ -1186,6 +1206,15 @@
         requested_time: document.getElementById('reschedule-time').value
       };
       updateBooking(b.id, patch).then(function () { rescheduleForm.hidden = true; openDetail(b.id); });
+    });
+
+    var priceToggle = document.getElementById('admin-price-toggle');
+    var priceForm = document.getElementById('admin-price-form');
+    priceToggle.addEventListener('click', function () { priceForm.hidden = !priceForm.hidden; });
+    document.getElementById('admin-price-cancel').addEventListener('click', function () { priceForm.hidden = true; });
+    document.getElementById('admin-price-save').addEventListener('click', function () {
+      var val = document.getElementById('price-edit-value').value;
+      updateBooking(b.id, { price: val === '' ? null : parseFloat(val) }).then(function () { priceForm.hidden = true; openDetail(b.id); });
     });
 
     var contactToggle = document.getElementById('admin-contact-toggle');
