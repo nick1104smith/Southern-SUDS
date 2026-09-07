@@ -75,14 +75,23 @@
   letter-spacing: 0.04em;
   white-space: nowrap;
 }
-.status-badge--pending   { background: rgba(240, 162, 2, 0.16);   color: #d68f00;  border: 1px solid rgba(240, 162, 2, 0.45); }
-.status-badge--confirmed { background: rgba(46, 204, 113, 0.16);  color: #1fa35a;  border: 1px solid rgba(46, 204, 113, 0.45); }
-.status-badge--completed { background: rgba(61, 139, 253, 0.16);  color: #2f77dd;  border: 1px solid rgba(61, 139, 253, 0.45); }
-.status-badge--declined  { background: rgba(239, 27, 27, 0.14);   color: var(--a-accent); border: 1px solid rgba(239, 27, 27, 0.45); }
-.status-badge--cancelled { background: rgba(150, 150, 150, 0.16); color: var(--a-text-muted); border: 1px solid rgba(150, 150, 150, 0.35); }
-:root[data-theme="dark"] .status-badge--pending   { color: #f0a202; }
-:root[data-theme="dark"] .status-badge--confirmed { color: #2ecc71; }
-:root[data-theme="dark"] .status-badge--completed { color: #3d8bfd; }
+.status-badge--pending     { background: rgba(240, 162, 2, 0.16);   color: #d68f00;  border: 1px solid rgba(240, 162, 2, 0.45); }
+.status-badge--confirmed   { background: rgba(46, 204, 113, 0.16);  color: #1fa35a;  border: 1px solid rgba(46, 204, 113, 0.45); }
+.status-badge--in_progress { background: rgba(138, 92, 246, 0.16);  color: #7c3aed;  border: 1px solid rgba(138, 92, 246, 0.45); }
+.status-badge--completed   { background: rgba(61, 139, 253, 0.16);  color: #2f77dd;  border: 1px solid rgba(61, 139, 253, 0.45); }
+.status-badge--declined    { background: rgba(239, 27, 27, 0.14);   color: var(--a-accent); border: 1px solid rgba(239, 27, 27, 0.45); }
+.status-badge--cancelled   { background: rgba(150, 150, 150, 0.16); color: var(--a-text-muted); border: 1px solid rgba(150, 150, 150, 0.35); }
+:root[data-theme="dark"] .status-badge--pending     { color: #f0a202; }
+:root[data-theme="dark"] .status-badge--confirmed   { color: #2ecc71; }
+:root[data-theme="dark"] .status-badge--in_progress { color: #a78bfa; }
+:root[data-theme="dark"] .status-badge--completed   { color: #3d8bfd; }
+
+/* Payment status uses the same badge shape, distinct role from booking status */
+.status-badge--unpaid  { background: rgba(240, 162, 2, 0.16);   color: #d68f00; border: 1px solid rgba(240, 162, 2, 0.45); }
+.status-badge--paid    { background: rgba(46, 204, 113, 0.16);  color: #1fa35a; border: 1px solid rgba(46, 204, 113, 0.45); }
+.status-badge--partial { background: rgba(61, 139, 253, 0.16);  color: #2f77dd; border: 1px solid rgba(61, 139, 253, 0.45); }
+:root[data-theme="dark"] .status-badge--unpaid { color: #f0a202; }
+:root[data-theme="dark"] .status-badge--paid   { color: #2ecc71; }
 
 /* ==========================================================================
    SHELL — sidebar + topbar
@@ -295,10 +304,30 @@
 .admin-calendar-dot { width: 7px; height: 7px; border-radius: 50%; }
 .admin-calendar-dot--pending { background: #f0a202; }
 .admin-calendar-dot--confirmed { background: #2ecc71; }
+.admin-calendar-dot--in_progress { background: #7c3aed; }
 .admin-calendar-dot--completed { background: #3d8bfd; }
 .admin-calendar-dot--declined { background: var(--a-accent); }
 .admin-calendar-dot--cancelled { background: var(--a-text-muted); }
 .admin-calendar-day-detail { margin-top: var(--space-md); }
+.admin-calendar-header { flex-wrap: wrap; }
+
+/* ---- Week view ------------------------------------------------------------- */
+.admin-calendar-week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.admin-calendar-week-col { background: var(--a-surface); border: 1px solid var(--a-border); border-radius: var(--radius-sm); min-height: 140px; overflow: hidden; }
+.admin-calendar-week-col.is-today { border-color: var(--a-accent); }
+.admin-calendar-week-col-head { font-size: var(--fs-xs); font-weight: 800; padding: 0.5em; border-bottom: 1px solid var(--a-border); display: flex; justify-content: space-between; }
+.admin-calendar-week-col-body { padding: 0.4em; display: flex; flex-direction: column; gap: 0.35em; }
+.admin-calendar-week-item { font-size: 11px; padding: 0.4em 0.5em; border-radius: 6px; cursor: pointer; line-height: 1.3; }
+.admin-calendar-week-item strong { display: block; font-size: 11px; }
+.admin-calendar-week-empty { color: var(--a-text-muted); font-size: 11px; text-align: center; padding: 0.6em 0; }
+
+/* ---- Day view ---------------------------------------------------------------- */
+.admin-calendar-day-view .admin-booking-list { margin-top: var(--space-sm); }
+
+@media (max-width: 900px) {
+  .admin-calendar-week-grid { grid-template-columns: 1fr; }
+  .admin-calendar-week-col { min-height: auto; }
+}
 
 /* ==========================================================================
    CUSTOMERS
@@ -445,6 +474,21 @@
 .admin-revenue-promo-label { display: block; font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.9; font-weight: 700; }
 .admin-revenue-promo-value { display: block; font-size: var(--fs-2xl); font-weight: 800; }
 .admin-revenue-promo-link { font-weight: 700; font-size: var(--fs-sm); white-space: nowrap; }
+
+.admin-dashboard-top-actions { display: flex; justify-content: flex-end; margin-bottom: var(--space-md); }
+@media (max-width: 640px) { .admin-dashboard-top-actions { justify-content: stretch; } .admin-dashboard-top-actions .btn { width: 100%; } }
+
+/* ---- Internal (staff-only) notes ------------------------------------------- */
+.admin-admin-notes-section { background: rgba(240, 162, 2, 0.06); border: 1px dashed rgba(240, 162, 2, 0.4); border-radius: var(--radius-sm); padding: var(--space-sm) var(--space-md); margin-bottom: var(--space-md); }
+.admin-admin-notes-section h4 { font-size: var(--fs-sm); margin-bottom: 0.5em; display: flex; align-items: center; gap: 0.5em; }
+.admin-admin-notes-tag { font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; background: #d68f00; color: #fff; padding: 0.15em 0.6em; border-radius: var(--radius-pill); font-weight: 800; }
+.admin-admin-notes-section textarea { width: 100%; margin-bottom: 0.6em; }
+.admin-notes-saved { color: #1fa35a; font-size: var(--fs-xs); font-weight: 700; margin-left: 0.6em; }
+
+/* ---- Contact Customer popover ------------------------------------------------ */
+.admin-contact-menu { display: flex; flex-direction: column; gap: 0.4em; background: var(--a-surface-2); border: 1px solid var(--a-border); border-radius: var(--radius-sm); padding: 0.6em; margin-bottom: var(--space-md); }
+.admin-contact-menu-item { display: flex; align-items: center; gap: 0.5em; padding: 0.6em 0.8em; border-radius: var(--radius-sm); color: var(--a-text); font-weight: 600; font-size: var(--fs-sm); }
+.admin-contact-menu-item:hover { background: var(--a-surface-hover); }
 
 /* ---- Payment summary + Complete Job modal ---------------------------------- */
 .admin-payment-summary { margin-bottom: var(--space-md); }

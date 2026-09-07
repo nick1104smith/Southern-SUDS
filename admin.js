@@ -365,21 +365,31 @@
   /* ---------------------------------------------------------------------- */
   function renderDashboard() {
     var today = todayStr();
-    var todayCount = bookings.filter(function (b) { return b.requested_date === today && b.status === 'confirmed'; }).length;
+    var now = new Date();
     var pendingCount = bookings.filter(function (b) { return b.status === 'pending'; }).length;
-    var confirmedCount = bookings.filter(function (b) { return b.status === 'confirmed'; }).length;
     var completedCount = bookings.filter(function (b) { return b.status === 'completed'; }).length;
     var completedAll = bookings.filter(function (b) { return b.status === 'completed'; });
-    var totalRevenue = completedAll.reduce(function (s, b) { return s + serviceRevenueOf(b); }, 0);
-    var upcomingCount = bookings.filter(function (b) { return b.status === 'confirmed' && b.requested_date >= today; }).length;
+    var upcomingCount = bookings.filter(function (b) { return (b.status === 'confirmed' || b.status === 'in_progress') && b.requested_date >= today; }).length;
+
+    var weekStartD = new Date(now); weekStartD.setDate(now.getDate() - now.getDay());
+    var weekStart = dateStr(weekStartD);
+    var weekEndD = new Date(weekStartD); weekEndD.setDate(weekStartD.getDate() + 6);
+    var weekEnd = dateStr(weekEndD);
+    var monthStart = firstOfMonth(now.getFullYear(), now.getMonth());
+    var monthEnd = lastOfMonth(now.getFullYear(), now.getMonth());
+
+    var todayJobs = completedAll.filter(function (b) { return revenueDateStr(b) === today; });
+    var weekJobs = completedAll.filter(function (b) { var d = revenueDateStr(b); return d >= weekStart && d <= weekEnd; });
+    var monthJobs = completedAll.filter(function (b) { var d = revenueDateStr(b); return d >= monthStart && d <= monthEnd; });
 
     var cards = [
-      { icon: '📅', value: todayCount, label: "Today's Appointments" },
+      { icon: '💵', value: SS.formatMoney(sum(todayJobs, serviceRevenueOf)) || '$0', label: "Today's Revenue" },
+      { icon: '📆', value: SS.formatMoney(sum(weekJobs, serviceRevenueOf)) || '$0', label: 'Weekly Revenue' },
+      { icon: '🗓️', value: SS.formatMoney(sum(monthJobs, serviceRevenueOf)) || '$0', label: 'Monthly Revenue', highlight: true },
+      { icon: '🎁', value: SS.formatMoney(sum(monthJobs, tipOf)) || '$0', label: 'Tips This Month' },
+      { icon: '📋', value: bookings.length, label: 'Total Appointments' },
       { icon: '⏳', value: pendingCount, label: 'Pending Requests', highlight: pendingCount > 0 },
-      { icon: '✅', value: confirmedCount, label: 'Confirmed Appointments' },
-      { icon: '🏁', value: completedCount, label: 'Completed Jobs' },
-      { icon: '💰', value: SS.formatMoney(totalRevenue) || '$0', label: 'Total Revenue' },
-      { icon: '📈', value: upcomingCount, label: 'Upcoming Appointments' }
+      { icon: '🏁', value: completedCount, label: 'Completed Jobs' }
     ];
     document.getElementById('admin-summary-grid').innerHTML = cards.map(function (c) {
       return '<div class="admin-summary-card' + (c.highlight ? ' is-highlight' : '') + '">' +
@@ -394,7 +404,14 @@
     pendingEl.innerHTML = pendingList.length ? pendingList.map(rowHTML).join('') : '<p class="admin-booking-card-empty">Nothing pending — you\'re all caught up.</p>';
     bindRowClicks(pendingEl);
 
-    var upcomingList = bookings.filter(function (b) { return b.status === 'confirmed' && b.requested_date >= today; })
+    var todayList = bookings.filter(function (b) { return b.requested_date === today && b.status !== 'cancelled' && b.status !== 'declined'; });
+    var todayEl = document.getElementById('admin-today-list');
+    if (todayEl) {
+      todayEl.innerHTML = todayList.length ? todayList.map(rowHTML).join('') : '<p class="admin-booking-card-empty">Nothing on the books for today.</p>';
+      bindRowClicks(todayEl);
+    }
+
+    var upcomingList = bookings.filter(function (b) { return (b.status === 'confirmed' || b.status === 'in_progress') && b.requested_date >= today; })
       .sort(function (a, c) { return a.requested_date.localeCompare(c.requested_date); }).slice(0, 6);
     var upcomingEl = document.getElementById('admin-upcoming-list');
     upcomingEl.innerHTML = upcomingList.length ? upcomingList.map(rowHTML).join('') : '<p class="admin-booking-card-empty">No confirmed upcoming appointments yet.</p>';
@@ -451,13 +468,26 @@
   var MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   var WEEKDAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-  document.getElementById('admin-cal-prev').addEventListener('click', function () {
-    calendarCursor.setMonth(calendarCursor.getMonth() - 1);
+  var calendarViewMode = 'month';
+
+  document.getElementById('admin-cal-prev').addEventListener('click', function () { stepCalendar(-1); });
+  document.getElementById('admin-cal-next').addEventListener('click', function () { stepCalendar(1); });
+
+  function stepCalendar(dir) {
+    if (calendarViewMode === 'month') { calendarCursor.setMonth(calendarCursor.getMonth() + dir); }
+    else if (calendarViewMode === 'week') { calendarCursor.setDate(calendarCursor.getDate() + dir * 7); }
+    else { calendarCursor.setDate(calendarCursor.getDate() + dir); }
     renderCalendar();
-  });
-  document.getElementById('admin-cal-next').addEventListener('click', function () {
-    calendarCursor.setMonth(calendarCursor.getMonth() + 1);
-    renderCalendar();
+  }
+
+  var calModeTabs = Array.prototype.slice.call(document.querySelectorAll('#admin-cal-mode-tabs .admin-filter-tab'));
+  calModeTabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      calModeTabs.forEach(function (t) { t.classList.remove('is-active'); });
+      tab.classList.add('is-active');
+      calendarViewMode = tab.getAttribute('data-mode');
+      renderCalendar();
+    });
   });
 
   function bookingsByDate() {
@@ -469,7 +499,22 @@
     return map;
   }
 
+  function dateStr(d) { return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
+
   function renderCalendar() {
+    var gridEl = document.getElementById('admin-cal-grid');
+    var weekEl = document.getElementById('admin-cal-week-grid');
+    var dayEl = document.getElementById('admin-cal-day-view');
+    gridEl.hidden = calendarViewMode !== 'month';
+    weekEl.hidden = calendarViewMode !== 'week';
+    dayEl.hidden = calendarViewMode !== 'day';
+
+    if (calendarViewMode === 'month') { renderCalendarMonth(gridEl); }
+    else if (calendarViewMode === 'week') { renderCalendarWeek(weekEl); }
+    else { renderCalendarDay(dayEl); }
+  }
+
+  function renderCalendarMonth(gridEl) {
     var year = calendarCursor.getFullYear();
     var month = calendarCursor.getMonth();
     document.getElementById('admin-cal-label').textContent = MONTH_NAMES[month] + ' ' + year;
@@ -485,7 +530,7 @@
     for (var i = 0; i < 42; i++) {
       var cellDate = new Date(gridStart);
       cellDate.setDate(gridStart.getDate() + i);
-      var cellStr = cellDate.getFullYear() + '-' + pad2(cellDate.getMonth() + 1) + '-' + pad2(cellDate.getDate());
+      var cellStr = dateStr(cellDate);
       var isOtherMonth = cellDate.getMonth() !== month;
       var dayBookings = byDate[cellStr] || [];
       var dots = dayBookings.slice(0, 6).map(function (b) { return '<span class="admin-calendar-dot admin-calendar-dot--' + b.status + '"></span>'; }).join('');
@@ -501,17 +546,63 @@
         '</div>'
       );
     }
-    var gridEl = document.getElementById('admin-cal-grid');
     gridEl.innerHTML = cells.join('');
     gridEl.querySelectorAll('.admin-calendar-daycell').forEach(function (cell) {
       cell.addEventListener('click', function () {
         selectedCalendarDate = cell.getAttribute('data-date');
-        renderCalendar();
+        renderCalendarDayDetail();
       });
     });
+    renderCalendarDayDetail();
+  }
 
+  function renderCalendarWeek(weekEl) {
+    var start = new Date(calendarCursor);
+    start.setDate(start.getDate() - start.getDay());
+    var end = new Date(start); end.setDate(end.getDate() + 6);
+    document.getElementById('admin-cal-label').textContent =
+      start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ' – ' + end.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+
+    var byDate = bookingsByDate();
+    var today = todayStr();
+    var cols = '';
+    for (var i = 0; i < 7; i++) {
+      var d = new Date(start); d.setDate(start.getDate() + i);
+      var ds = dateStr(d);
+      var dayBookings = (byDate[ds] || []).slice().sort(function (a, c) { return (a.requested_time || '').localeCompare(c.requested_time || ''); });
+      cols +=
+        '<div class="admin-calendar-week-col' + (ds === today ? ' is-today' : '') + '">' +
+          '<div class="admin-calendar-week-col-head">' + WEEKDAYS[i] + ' <span>' + d.getDate() + '</span></div>' +
+          '<div class="admin-calendar-week-col-body">' +
+            (dayBookings.length ? dayBookings.map(function (b) {
+              return '<div class="admin-calendar-week-item status-badge--' + b.status + '" data-id="' + escapeHtml(b.id) + '">' +
+                '<strong>' + escapeHtml(b.customer_name) + '</strong>' + escapeHtml(b.service) +
+              '</div>';
+            }).join('') : '<p class="admin-calendar-week-empty">—</p>') +
+          '</div>' +
+        '</div>';
+    }
+    weekEl.innerHTML = cols;
+    weekEl.querySelectorAll('[data-id]').forEach(function (item) {
+      item.addEventListener('click', function () { openDetail(item.getAttribute('data-id')); });
+    });
+  }
+
+  function renderCalendarDay(dayEl) {
+    document.getElementById('admin-cal-label').textContent = calendarCursor.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    var ds = dateStr(calendarCursor);
+    var dayBookings = bookings.filter(function (b) { return b.requested_date === ds; })
+      .sort(function (a, c) { return (a.requested_time || '').localeCompare(c.requested_time || ''); });
+    dayEl.innerHTML = dayBookings.length
+      ? '<div class="admin-booking-list">' + dayBookings.map(bookingCardHTML).join('') + '</div>'
+      : '<p class="admin-booking-card-empty">No appointments on this day.</p>';
+    bindRowClicks(dayEl);
+  }
+
+  function renderCalendarDayDetail() {
     var detailEl = document.getElementById('admin-cal-day-detail');
     if (!selectedCalendarDate) { detailEl.innerHTML = ''; return; }
+    var byDate = bookingsByDate();
     var dayList = byDate[selectedCalendarDate] || [];
     var heading = '<div class="admin-section-title">' + fmtDate(selectedCalendarDate) + '</div>';
     detailEl.innerHTML = heading + (dayList.length
@@ -624,12 +715,40 @@
   /* ---------------------------------------------------------------------- */
   function statusActionButtons(b) {
     var buttons = [];
-    if (b.status !== 'confirmed') { buttons.push('<button type="button" class="btn btn-success" data-action="confirmed">Confirm Booking</button>'); }
-    if (b.status !== 'declined') { buttons.push('<button type="button" class="btn btn-danger" data-action="declined">Decline Booking</button>'); }
+    if (b.status !== 'confirmed') { buttons.push('<button type="button" class="btn btn-success" data-action="confirmed">Confirm Appointment</button>'); }
+    if (b.status !== 'in_progress' && b.status !== 'completed') { buttons.push('<button type="button" class="btn btn-secondary" data-action="in_progress">Mark In Progress</button>'); }
     if (b.status !== 'completed') { buttons.push('<button type="button" class="btn btn-success" data-action="completed">Mark Completed</button>'); }
-    if (b.status !== 'cancelled') { buttons.push('<button type="button" class="btn btn-muted" data-action="cancelled">Cancel Booking</button>'); }
-    buttons.push('<button type="button" class="btn btn-secondary" id="admin-edit-toggle">Edit Booking</button>');
+    buttons.push('<button type="button" class="btn btn-secondary" id="admin-reschedule-toggle">Reschedule</button>');
+    buttons.push('<button type="button" class="btn btn-secondary" id="admin-contact-toggle">Contact Customer</button>');
+    if (b.status !== 'declined') { buttons.push('<button type="button" class="btn btn-danger" data-action="declined">Decline</button>'); }
+    if (b.status !== 'cancelled') { buttons.push('<button type="button" class="btn btn-muted" data-action="cancelled">Cancel Appointment</button>'); }
+    buttons.push('<button type="button" class="btn btn-secondary" id="admin-edit-toggle">Edit Appointment</button>');
     return buttons.join('');
+  }
+
+  function contactMenuHTML(b) {
+    return '<div class="admin-contact-menu" id="admin-contact-menu" hidden>' +
+      '<a href="tel:' + escapeHtml(b.phone) + '" class="admin-contact-menu-item">📞 Call ' + escapeHtml(b.phone) + '</a>' +
+      '<a href="sms:' + escapeHtml(b.phone) + '" class="admin-contact-menu-item">💬 Text ' + escapeHtml(b.phone) + '</a>' +
+      (b.email ? '<a href="mailto:' + escapeHtml(b.email) + '" class="admin-contact-menu-item">✉️ Email ' + escapeHtml(b.email) + '</a>' : '') +
+    '</div>';
+  }
+
+  function rescheduleFormHTML(b) {
+    return '<div class="admin-edit-form" id="admin-reschedule-form" hidden>' +
+      '<div class="form-grid">' +
+        '<div class="form-group"><label>New Date</label><input type="date" id="reschedule-date" value="' + escapeHtml(b.requested_date) + '"></div>' +
+        '<div class="form-group"><label>New Time Window</label><select id="reschedule-time">' +
+          ['Morning (8am–11am)', 'Midday (11am–2pm)', 'Afternoon (2pm–5pm)', 'Evening (5pm–7pm)'].map(function (t) {
+            return '<option' + (b.requested_time === t ? ' selected' : '') + '>' + t + '</option>';
+          }).join('') +
+        '</select></div>' +
+      '</div>' +
+      '<div class="booking-step-nav" style="margin-top:0.8em;">' +
+        '<button type="button" class="btn btn-secondary" id="admin-reschedule-cancel">Cancel</button>' +
+        '<button type="button" class="btn btn-primary" id="admin-reschedule-save">Save New Time</button>' +
+      '</div>' +
+    '</div>';
   }
 
   function paymentSummaryHTML(b) {
@@ -711,6 +830,160 @@
     });
   }
   document.getElementById('admin-complete-modal').addEventListener('click', function (e) { if (e.target === this) { this.hidden = true; } });
+
+  /* ---- Create Appointment (phone/text bookings) --------------------------- */
+  function serviceOptionsHTML() {
+    return Object.keys(SS.SERVICES).map(function (key) {
+      return '<option value="' + key + '">' + escapeHtml(SS.SERVICES[key].name) + '</option>';
+    }).join('');
+  }
+
+  function openCreateAppointmentModal() {
+    var box = document.getElementById('admin-create-box');
+    box.innerHTML =
+      '<button type="button" class="modal-close" data-close-modal aria-label="Close">&times;</button>' +
+      '<h3>Create Appointment</h3>' +
+      '<p style="color:var(--a-text-muted); font-size:var(--fs-sm); margin-bottom:1em;">For a customer who called or texted instead of booking online.</p>' +
+      '<div class="form-grid">' +
+        '<div class="form-group"><label>Customer Name <span class="req">*</span></label><input type="text" id="create-name"></div>' +
+        '<div class="form-group"><label>Phone <span class="req">*</span></label><input type="tel" id="create-phone"></div>' +
+        '<div class="form-group"><label>Email</label><input type="email" id="create-email"></div>' +
+        '<div class="form-group"><label>Vehicle Type</label><select id="create-vehicle-type"><option value="">Select</option>' +
+          SS.VEHICLE_TYPES.map(function (v) { return '<option value="' + escapeHtml(v.label) + '">' + escapeHtml(v.label) + '</option>'; }).join('') +
+        '</select></div>' +
+        '<div class="form-group"><label>Vehicle Year</label><input type="text" id="create-vehicle-year" placeholder="2021"></div>' +
+        '<div class="form-group"><label>Vehicle Make</label><input type="text" id="create-vehicle-make" placeholder="Ford"></div>' +
+        '<div class="form-group"><label>Vehicle Model</label><input type="text" id="create-vehicle-model" placeholder="F-150"></div>' +
+        '<div class="form-group"><label>Service / Package <span class="req">*</span></label><select id="create-service"><option value="">Select a service</option>' + serviceOptionsHTML() + '</select></div>' +
+        '<div class="form-group" id="create-vehicle-size-group" hidden><label>Vehicle Size <span class="req">*</span></label><select id="create-vehicle-size"><option value="">Select</option><option value="compact">Compact Car</option><option value="full-size">Full-Size Car</option><option value="larger">Larger Vehicle / Truck</option></select></div>' +
+        '<div class="form-group"><label>Appointment Date <span class="req">*</span></label><input type="date" id="create-date" value="' + todayStr() + '"></div>' +
+        '<div class="form-group"><label>Appointment Time <span class="req">*</span></label><select id="create-time">' +
+          ['Morning (8am–11am)', 'Midday (11am–2pm)', 'Afternoon (2pm–5pm)', 'Evening (5pm–7pm)'].map(function (t) { return '<option>' + t + '</option>'; }).join('') +
+        '</select></div>' +
+        '<div class="form-group form-group-full"><label>Service Address <span class="req">*</span></label><input type="text" id="create-address"></div>' +
+        '<div class="form-group"><label>Price ($)</label><input type="number" step="0.01" min="0" id="create-price"></div>' +
+        '<div class="form-group"><label>Tip ($)</label><input type="number" step="0.01" min="0" id="create-tip" value="0"></div>' +
+        '<div class="form-group"><label>Payment Status</label><select id="create-payment-status">' +
+          SS.PAYMENT_STATUSES.map(function (s) { return '<option value="' + s + '">' + SS.PAYMENT_STATUS_LABELS[s] + '</option>'; }).join('') +
+        '</select></div>' +
+        '<div class="form-group"><label>Appointment Status</label><select id="create-status">' +
+          SS.STATUSES.filter(function (s) { return s !== 'declined'; }).map(function (s) { return '<option value="' + s + '"' + (s === 'confirmed' ? ' selected' : '') + '>' + SS.STATUS_LABELS[s] + '</option>'; }).join('') +
+        '</select></div>' +
+      '</div>' +
+      '<div class="form-group"><label>Add-ons (notes)</label><input type="text" id="create-addons" placeholder="e.g. Pet hair removal, engine bay"></div>' +
+      '<div class="form-group"><label>Notes</label><textarea id="create-notes" rows="3"></textarea></div>' +
+      '<p class="field-error" id="create-error"></p>' +
+      '<div class="booking-step-nav">' +
+        '<button type="button" class="btn btn-secondary" id="create-cancel-btn">Cancel</button>' +
+        '<button type="button" class="btn btn-primary" id="create-save-btn">Save Appointment</button>' +
+      '</div>';
+
+    var modal = document.getElementById('admin-create-modal');
+    modal.hidden = false;
+    box.scrollTop = 0;
+    box.querySelector('.modal-close').addEventListener('click', function () { modal.hidden = true; });
+    document.getElementById('create-cancel-btn').addEventListener('click', function () { modal.hidden = true; });
+
+    var serviceSelect = document.getElementById('create-service');
+    var sizeGroup = document.getElementById('create-vehicle-size-group');
+    var sizeSelect = document.getElementById('create-vehicle-size');
+    var priceInput = document.getElementById('create-price');
+
+    function updateCreatePrice() {
+      var svc = SS.SERVICES[serviceSelect.value];
+      var needsSize = !!(svc && svc.tiered);
+      sizeGroup.hidden = !needsSize;
+      if (!needsSize) { sizeSelect.value = ''; }
+      if (svc) {
+        var result = SS.priceFor(serviceSelect.value, sizeSelect.value);
+        if (result && result.amount !== null) { priceInput.value = result.amount; }
+      }
+    }
+    serviceSelect.addEventListener('change', updateCreatePrice);
+    sizeSelect.addEventListener('change', updateCreatePrice);
+
+    document.getElementById('create-save-btn').addEventListener('click', function () {
+      var errorEl = document.getElementById('create-error');
+      errorEl.textContent = '';
+      var name = document.getElementById('create-name').value.trim();
+      var phone = document.getElementById('create-phone').value.trim();
+      var address = document.getElementById('create-address').value.trim();
+      var serviceKey = serviceSelect.value;
+      var date = document.getElementById('create-date').value;
+      var time = document.getElementById('create-time').value;
+
+      if (!name || !phone || !address || !serviceKey || !date || !time) {
+        errorEl.textContent = 'Please fill in customer name, phone, service, address, date, and time.';
+        return;
+      }
+      var svc = SS.SERVICES[serviceKey];
+      if (svc.tiered && !sizeSelect.value) {
+        errorEl.textContent = 'Please select a vehicle size for this service.';
+        return;
+      }
+
+      var id = SS.uuid();
+      var addonsNote = document.getElementById('create-addons').value.trim();
+      var notes = document.getElementById('create-notes').value.trim();
+      var fullNotes = (addonsNote ? 'Add-ons: ' + addonsNote + (notes ? '\n' : '') : '') + notes;
+      var priceVal = priceInput.value;
+
+      var payload = {
+        id: id,
+        idempotency_key: id,
+        customer_name: name,
+        phone: phone,
+        email: document.getElementById('create-email').value.trim() || null,
+        address: address,
+        service_key: serviceKey,
+        vehicle_size: sizeSelect.value || null,
+        service: svc.name + (sizeSelect.value ? ' — ' + SS.VEHICLE_SIZE_LABELS[sizeSelect.value] : ''),
+        vehicle_type: document.getElementById('create-vehicle-type').value || 'Not specified',
+        vehicle_year: document.getElementById('create-vehicle-year').value.trim() || null,
+        vehicle_make: document.getElementById('create-vehicle-make').value.trim() || null,
+        vehicle_model: document.getElementById('create-vehicle-model').value.trim() || null,
+        addons: [],
+        price: priceVal === '' ? null : parseFloat(priceVal),
+        price_is_estimate: false,
+        requested_date: date,
+        requested_time: time,
+        notes: fullNotes || null,
+        status: document.getElementById('create-status').value,
+        tip_amount: parseFloat(document.getElementById('create-tip').value) || 0,
+        payment_status: document.getElementById('create-payment-status').value
+      };
+
+      var saveBtn = document.getElementById('create-save-btn');
+      saveBtn.disabled = true; saveBtn.textContent = 'Saving…';
+
+      function onSaved() {
+        modal.hidden = true;
+        loadBookings().then(function () { switchView('bookings'); openDetail(id); });
+      }
+
+      if (SS.DEMO_MODE) {
+        var demoRow = Object.assign({}, payload, {
+          created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
+          admin_viewed_at: new Date().toISOString(), photos: []
+        });
+        SS.demoInsert(demoRow);
+        onSaved();
+        return;
+      }
+
+      SS.getClient().from('bookings').insert([payload]).then(function (res) {
+        saveBtn.disabled = false; saveBtn.textContent = 'Save Appointment';
+        if (res.error) { errorEl.textContent = res.error.message; return; }
+        onSaved();
+      });
+    });
+  }
+
+  var createBtn1 = document.getElementById('admin-create-appointment-btn');
+  var createBtn2 = document.getElementById('admin-create-appointment-btn-dash');
+  if (createBtn1) { createBtn1.addEventListener('click', openCreateAppointmentModal); }
+  if (createBtn2) { createBtn2.addEventListener('click', openCreateAppointmentModal); }
+  document.getElementById('admin-create-modal').addEventListener('click', function (e) { if (e.target === this) { this.hidden = true; } });
 
   function renderPhotoGallery(b) {
     SS.getPhotos(b.id).then(function (photos) {
@@ -810,26 +1083,41 @@
       '<button type="button" class="modal-close" data-close-modal aria-label="Close">&times;</button>' +
       '<div class="admin-detail-header">' +
         '<div><h3>' + escapeHtml(b.customer_name) + '</h3><div class="admin-detail-created">Requested ' + fmtDateTime(b.created_at) + '</div></div>' +
-        statusBadge(b.status) +
+        '<div style="display:flex; gap:0.4em; flex-wrap:wrap;">' + statusBadge(b.status) + '<span class="status-badge status-badge--' + b.payment_status + '">' + SS.PAYMENT_STATUS_LABELS[b.payment_status] + '</span></div>' +
       '</div>' +
       '<div class="admin-detail-grid">' +
         '<div class="admin-detail-field"><span class="k">Phone</span><span class="v"><a href="tel:' + escapeHtml(b.phone) + '">' + escapeHtml(b.phone) + '</a></span></div>' +
         '<div class="admin-detail-field"><span class="k">Email</span><span class="v"><a href="mailto:' + escapeHtml(b.email) + '">' + escapeHtml(b.email) + '</a></span></div>' +
         '<div class="admin-detail-field"><span class="k">Address</span><span class="v">' + escapeHtml(b.address) + '</span></div>' +
         '<div class="admin-detail-field"><span class="k">Service</span><span class="v">' + escapeHtml(b.service) + '</span></div>' +
-        '<div class="admin-detail-field"><span class="k">Vehicle</span><span class="v">' + escapeHtml(b.vehicle_type) + '</span></div>' +
+        '<div class="admin-detail-field"><span class="k">Vehicle</span><span class="v">' + escapeHtml(b.vehicle_type) + (b.vehicle_year || b.vehicle_make || b.vehicle_model ? ' — ' + [b.vehicle_year, b.vehicle_make, b.vehicle_model].filter(Boolean).map(escapeHtml).join(' ') : '') + '</span></div>' +
         '<div class="admin-detail-field"><span class="k">Price</span><span class="v">' + priceText(b) + '</span></div>' +
         '<div class="admin-detail-field"><span class="k">Requested Date</span><span class="v">' + fmtDate(b.requested_date) + '</span></div>' +
         '<div class="admin-detail-field"><span class="k">Requested Time</span><span class="v">' + escapeHtml(b.requested_time) + '</span></div>' +
       '</div>' +
       (b.final_price !== null && b.final_price !== undefined ? paymentSummaryHTML(b) : '') +
       '<div class="admin-detail-notes">' + (b.notes ? escapeHtml(b.notes) : 'No customer notes.') + '</div>' +
+      '<div class="admin-admin-notes-section">' +
+        '<h4>Internal Notes <span class="admin-admin-notes-tag">Staff Only</span></h4>' +
+        '<textarea id="admin-notes-field" rows="3" placeholder="Notes for staff only — never shown to the customer.">' + escapeHtml(b.admin_notes || '') + '</textarea>' +
+        '<button type="button" class="btn btn-secondary" id="admin-notes-save">Save Internal Notes</button>' +
+        '<span class="admin-notes-saved" id="admin-notes-saved-msg" hidden>Saved ✓</span>' +
+      '</div>' +
+      rescheduleFormHTML(b) +
+      contactMenuHTML(b) +
       '<div class="admin-edit-form" id="admin-edit-form" hidden>' +
         '<div class="form-grid">' +
           '<div class="form-group"><label>Requested Date</label><input type="date" id="edit-date" value="' + escapeHtml(b.requested_date) + '"></div>' +
           '<div class="form-group"><label>Requested Time</label><input type="text" id="edit-time" value="' + escapeHtml(b.requested_time) + '"></div>' +
+          '<div class="form-group"><label>Vehicle Type</label><input type="text" id="edit-vehicle-type" value="' + escapeHtml(b.vehicle_type || '') + '"></div>' +
+          '<div class="form-group"><label>Service Address</label><input type="text" id="edit-address" value="' + escapeHtml(b.address || '') + '"></div>' +
+          '<div class="form-group"><label>Price ($)</label><input type="number" step="0.01" min="0" id="edit-price" value="' + escapeHtml(b.price !== null && b.price !== undefined ? String(b.price) : '') + '"></div>' +
+          '<div class="form-group"><label>Payment Status</label><select id="edit-payment-status">' +
+            SS.PAYMENT_STATUSES.map(function (s) { return '<option value="' + s + '"' + (b.payment_status === s ? ' selected' : '') + '>' + SS.PAYMENT_STATUS_LABELS[s] + '</option>'; }).join('') +
+          '</select></div>' +
         '</div>' +
         '<div class="form-group"><label>Notes</label><textarea id="edit-notes" rows="3">' + escapeHtml(b.notes || '') + '</textarea></div>' +
+        '<p class="field-hint">Editing the price here is saved exactly as entered — nothing recalculates it.</p>' +
         '<div class="booking-step-nav" style="margin-top:0.8em;">' +
           '<button type="button" class="btn btn-secondary" id="admin-edit-cancel">Cancel</button>' +
           '<button type="button" class="btn btn-primary" id="admin-edit-save">Save Changes</button>' +
@@ -875,12 +1163,41 @@
     editToggle.addEventListener('click', function () { editForm.hidden = !editForm.hidden; });
     document.getElementById('admin-edit-cancel').addEventListener('click', function () { editForm.hidden = true; });
     document.getElementById('admin-edit-save').addEventListener('click', function () {
+      var priceVal = document.getElementById('edit-price').value;
       var patch = {
         requested_date: document.getElementById('edit-date').value,
         requested_time: document.getElementById('edit-time').value,
+        vehicle_type: document.getElementById('edit-vehicle-type').value,
+        address: document.getElementById('edit-address').value,
+        price: priceVal === '' ? null : parseFloat(priceVal),
+        payment_status: document.getElementById('edit-payment-status').value,
         notes: document.getElementById('edit-notes').value
       };
       updateBooking(b.id, patch).then(function () { editForm.hidden = true; openDetail(b.id); });
+    });
+
+    var rescheduleToggle = document.getElementById('admin-reschedule-toggle');
+    var rescheduleForm = document.getElementById('admin-reschedule-form');
+    rescheduleToggle.addEventListener('click', function () { rescheduleForm.hidden = !rescheduleForm.hidden; });
+    document.getElementById('admin-reschedule-cancel').addEventListener('click', function () { rescheduleForm.hidden = true; });
+    document.getElementById('admin-reschedule-save').addEventListener('click', function () {
+      var patch = {
+        requested_date: document.getElementById('reschedule-date').value,
+        requested_time: document.getElementById('reschedule-time').value
+      };
+      updateBooking(b.id, patch).then(function () { rescheduleForm.hidden = true; openDetail(b.id); });
+    });
+
+    var contactToggle = document.getElementById('admin-contact-toggle');
+    var contactMenu = document.getElementById('admin-contact-menu');
+    contactToggle.addEventListener('click', function () { contactMenu.hidden = !contactMenu.hidden; });
+
+    document.getElementById('admin-notes-save').addEventListener('click', function () {
+      var savedMsg = document.getElementById('admin-notes-saved-msg');
+      updateBooking(b.id, { admin_notes: document.getElementById('admin-notes-field').value }).then(function () {
+        savedMsg.hidden = false;
+        setTimeout(function () { savedMsg.hidden = true; }, 2000);
+      });
     });
 
     wirePhotoUpload(b);
