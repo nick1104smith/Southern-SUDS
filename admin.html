@@ -113,6 +113,9 @@
     <main class="admin-main-content">
 
       <section class="admin-view" data-view="dashboard" id="view-dashboard">
+        <div class="admin-dashboard-top-actions">
+          <button type="button" class="btn btn-primary btn-lg" id="admin-create-appointment-btn-dash">+ Create Appointment</button>
+        </div>
         <div class="admin-summary-grid" id="admin-summary-grid"></div>
         <button type="button" class="admin-revenue-promo" id="admin-revenue-promo-card">
           <div>
@@ -123,6 +126,8 @@
         </button>
         <div class="admin-section-title">Needs Your Attention</div>
         <div class="admin-row-list" id="admin-pending-list"></div>
+        <div class="admin-section-title">Today's Appointments</div>
+        <div class="admin-row-list" id="admin-today-list"></div>
         <div class="admin-section-title">Upcoming Appointments</div>
         <div class="admin-row-list" id="admin-upcoming-list"></div>
         <div class="admin-section-title">Recent Bookings</div>
@@ -135,11 +140,15 @@
             <button type="button" class="admin-filter-tab is-active" data-status="all">All</button>
             <button type="button" class="admin-filter-tab" data-status="pending">Pending</button>
             <button type="button" class="admin-filter-tab" data-status="confirmed">Confirmed</button>
+            <button type="button" class="admin-filter-tab" data-status="in_progress">In Progress</button>
             <button type="button" class="admin-filter-tab" data-status="completed">Completed</button>
             <button type="button" class="admin-filter-tab" data-status="declined">Declined</button>
             <button type="button" class="admin-filter-tab" data-status="cancelled">Cancelled</button>
           </div>
-          <button type="button" class="btn btn-secondary" id="admin-refresh-btn">Refresh</button>
+          <div style="display:flex; gap:0.6em;">
+            <button type="button" class="btn btn-primary" id="admin-create-appointment-btn">+ Create Appointment</button>
+            <button type="button" class="btn btn-secondary" id="admin-refresh-btn">Refresh</button>
+          </div>
         </div>
         <p id="admin-empty-msg" style="color: var(--a-text-muted);" hidden>No booking requests in this view yet.</p>
         <div class="admin-booking-list" id="admin-booking-list"></div>
@@ -150,8 +159,15 @@
           <button type="button" class="admin-calendar-nav-btn" id="admin-cal-prev">‹</button>
           <span class="admin-calendar-month-label" id="admin-cal-label"></span>
           <button type="button" class="admin-calendar-nav-btn" id="admin-cal-next">›</button>
+          <div class="admin-filter-tabs" id="admin-cal-mode-tabs" style="margin-left:auto;">
+            <button type="button" class="admin-filter-tab" data-mode="day">Day</button>
+            <button type="button" class="admin-filter-tab" data-mode="week">Week</button>
+            <button type="button" class="admin-filter-tab is-active" data-mode="month">Month</button>
+          </div>
         </div>
         <div class="admin-calendar-grid" id="admin-cal-grid"></div>
+        <div class="admin-calendar-week-grid" id="admin-cal-week-grid" hidden></div>
+        <div class="admin-calendar-day-view" id="admin-cal-day-view" hidden></div>
         <div class="admin-calendar-day-detail" id="admin-cal-day-detail"></div>
       </section>
 
@@ -302,6 +318,11 @@
 <!-- Complete-job payment capture modal -->
 <div class="modal-overlay" id="admin-complete-modal" role="dialog" aria-modal="true" hidden>
   <div class="modal-box admin-detail-box" id="admin-complete-box"></div>
+</div>
+
+<!-- Manually create an appointment (phone/text bookings) -->
+<div class="modal-overlay" id="admin-create-modal" role="dialog" aria-modal="true" hidden>
+  <div class="modal-box admin-detail-box" id="admin-create-box"></div>
 </div>
 
 <!-- Photo lightbox -->

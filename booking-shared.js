@@ -61,14 +61,24 @@ window.SSBooking = (function () {
 
   var VEHICLE_SIZE_LABELS = { compact: 'Compact Car', 'full-size': 'Full-Size Car', larger: 'Larger Vehicle / Truck' };
 
-  var STATUSES = ['pending', 'confirmed', 'declined', 'completed', 'cancelled'];
-  var STATUS_LABELS = { pending: 'Pending', confirmed: 'Confirmed', declined: 'Declined', completed: 'Completed', cancelled: 'Cancelled' };
+  var STATUSES = ['pending', 'confirmed', 'in_progress', 'completed', 'declined', 'cancelled'];
+  var STATUS_LABELS = { pending: 'Pending', confirmed: 'Confirmed', in_progress: 'In Progress', declined: 'Declined', completed: 'Completed', cancelled: 'Cancelled' };
 
   var PHOTO_CATEGORIES = ['before', 'after', 'damage', 'other'];
   var PHOTO_CATEGORY_LABELS = { before: 'Before', after: 'After', damage: 'Damage', other: 'Other' };
 
   var PAYMENT_METHODS = ['cash', 'card', 'zelle', 'venmo', 'cashapp', 'other'];
   var PAYMENT_METHOD_LABELS = { cash: 'Cash', card: 'Card', zelle: 'Zelle', venmo: 'Venmo', cashapp: 'Cash App', other: 'Other' };
+
+  var PAYMENT_STATUSES = ['unpaid', 'paid', 'partial'];
+  var PAYMENT_STATUS_LABELS = { unpaid: 'Unpaid', paid: 'Paid', partial: 'Partially Paid' };
+
+  var VEHICLE_TYPES = [
+    { value: 'coupe', label: 'Coupe' }, { value: 'sedan', label: 'Sedan' }, { value: 'hatchback', label: 'Hatchback' },
+    { value: 'small-suv', label: 'Small SUV' }, { value: 'mid-suv', label: 'Mid-Size SUV' }, { value: 'large-suv', label: 'Large SUV' },
+    { value: 'truck', label: 'Pickup Truck' }, { value: 'long-bed-truck', label: 'Long Bed Truck' },
+    { value: 'van', label: 'Van' }, { value: 'commercial', label: 'Commercial Vehicle' }
+  ];
 
   function formatMoney(amount) {
     if (amount === null || amount === undefined || isNaN(amount)) { return ''; }
@@ -307,6 +317,9 @@ window.SSBooking = (function () {
     PHOTO_CATEGORY_LABELS: PHOTO_CATEGORY_LABELS,
     PAYMENT_METHODS: PAYMENT_METHODS,
     PAYMENT_METHOD_LABELS: PAYMENT_METHOD_LABELS,
+    PAYMENT_STATUSES: PAYMENT_STATUSES,
+    PAYMENT_STATUS_LABELS: PAYMENT_STATUS_LABELS,
+    VEHICLE_TYPES: VEHICLE_TYPES,
     formatMoney: formatMoney,
     priceFor: priceFor,
     demoGetAll: demoGetAll,
