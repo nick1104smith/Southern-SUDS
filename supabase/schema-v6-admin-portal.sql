@@ -13,6 +13,12 @@
 -- select/update policies already cover it since it's the same table).
 alter table public.bookings add column if not exists admin_notes text;
 
+-- Manually-created (phone/text) appointments may not have an email at all —
+-- the customer-facing form still requires one, but the admin portal's
+-- Create Appointment form treats it as optional. Found and fixed during
+-- testing: this was still NOT NULL from the original schema.
+alter table public.bookings alter column email drop not null;
+
 -- Whether the customer has actually paid yet, independent of *how* (that's
 -- payment_method, captured at completion). Lets a confirmed-but-unpaid job
 -- be tracked before it's ever marked completed.
