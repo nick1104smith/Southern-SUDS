@@ -1,0 +1,35 @@
+# ==============================================================================
+# Southern Suds Mobile Detailing — cache control
+# ==============================================================================
+# Hostinger's default is a 7-day browser cache on every static file. Fine for
+# images that rarely change, but disastrous for an actively-developed site —
+# every deploy would sit invisible to returning visitors (including anyone
+# with the admin dashboard installed as a PWA on their phone) for up to a
+# week. HTML/JS/CSS/JSON now must revalidate with the server on every load
+# (a fast 304 Not Modified when unchanged, a fresh copy the moment something
+# changes) — images/fonts keep a long cache since they're rarely touched.
+# ==============================================================================
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType application/javascript "access plus 0 seconds"
+  ExpiresByType text/javascript "access plus 0 seconds"
+  ExpiresByType text/css "access plus 0 seconds"
+  ExpiresByType application/json "access plus 0 seconds"
+  ExpiresByType application/manifest+json "access plus 0 seconds"
+  ExpiresByType image/png "access plus 1 month"
+  ExpiresByType image/jpeg "access plus 1 month"
+  ExpiresByType image/svg+xml "access plus 1 month"
+  ExpiresByType image/webp "access plus 1 month"
+  ExpiresByType image/x-icon "access plus 1 month"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|js|css|json)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "\.(png|jpe?g|svg|webp|ico|woff2?)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+</IfModule>
