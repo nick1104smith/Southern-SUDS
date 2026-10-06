@@ -718,6 +718,7 @@
     if (b.status !== 'confirmed') { buttons.push('<button type="button" class="btn btn-success" data-action="confirmed">Confirm Appointment</button>'); }
     if (b.status !== 'in_progress' && b.status !== 'completed') { buttons.push('<button type="button" class="btn btn-secondary" data-action="in_progress">Mark In Progress</button>'); }
     if (b.status !== 'completed') { buttons.push('<button type="button" class="btn btn-success" data-action="completed">Mark Completed</button>'); }
+    if (b.payment_status !== 'paid') { buttons.push('<button type="button" class="btn btn-success" id="admin-mark-paid-btn">Mark as Paid</button>'); }
     buttons.push('<button type="button" class="btn btn-secondary" id="admin-reschedule-toggle">Reschedule</button>');
     buttons.push('<button type="button" class="btn btn-secondary" id="admin-price-toggle">Edit Price</button>');
     buttons.push('<button type="button" class="btn btn-secondary" id="admin-contact-toggle">Contact Customer</button>');
@@ -1279,6 +1280,16 @@
         }
       });
     });
+
+    var markPaidBtn = document.getElementById('admin-mark-paid-btn');
+    if (markPaidBtn) {
+      markPaidBtn.addEventListener('click', function () {
+        var patch = { payment_status: 'paid' };
+        if (!b.payment_date) { patch.payment_date = todayStr(); }
+        markPaidBtn.disabled = true; markPaidBtn.textContent = 'Saving…';
+        updateBooking(b.id, patch).then(function () { openDetail(b.id); });
+      });
+    }
 
     var editToggle = document.getElementById('admin-edit-toggle');
     var editForm = document.getElementById('admin-edit-form');
