@@ -80,6 +80,30 @@ window.SSBooking = (function () {
     { value: 'van', label: 'Van' }, { value: 'commercial', label: 'Commercial Vehicle' }
   ];
 
+  // Mirrors index.html's "Add-On Services" section exactly — single source
+  // of truth for display name + price. Bookings store add-ons as plain
+  // names (bookings.addons, text[]); the price here is looked up at
+  // display/receipt time, not frozen into the row — if you change a price
+  // here, update the matching CASE in supabase/schema-v8-receipts.sql too
+  // (the emailed receipt can't reach this JS file).
+  var ADDON_CATALOG = [
+    { name: 'Pet Hair Removal', price: 89.99 },
+    { name: 'Engine Bay Cleaning', price: 150 },
+    { name: 'Stain Removal', price: 129.99 },
+    { name: 'Odor Treatment — Level 1', price: 149.99 },
+    { name: 'Odor Treatment — Level 2', price: 249.99 },
+    { name: 'Leather Conditioning', price: 79.99 },
+    { name: 'Interior Shampoo', price: 69.99 },
+    { name: 'Carpet Extraction', price: 129.99 },
+    { name: 'Ceramic Spray Sealant', price: 149.99 },
+    { name: 'Headlight Restoration', price: 200 },
+    { name: 'Mold Inspection', price: 0 }
+  ];
+  function addonPrice(name) {
+    for (var i = 0; i < ADDON_CATALOG.length; i++) { if (ADDON_CATALOG[i].name === name) { return ADDON_CATALOG[i].price; } }
+    return null;
+  }
+
   function formatMoney(amount) {
     if (amount === null || amount === undefined || isNaN(amount)) { return ''; }
     var rounded = Math.round(amount * 100) / 100;
@@ -320,6 +344,8 @@ window.SSBooking = (function () {
     PAYMENT_STATUSES: PAYMENT_STATUSES,
     PAYMENT_STATUS_LABELS: PAYMENT_STATUS_LABELS,
     VEHICLE_TYPES: VEHICLE_TYPES,
+    ADDON_CATALOG: ADDON_CATALOG,
+    addonPrice: addonPrice,
     formatMoney: formatMoney,
     priceFor: priceFor,
     demoGetAll: demoGetAll,

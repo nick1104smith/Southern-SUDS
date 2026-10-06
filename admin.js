@@ -823,21 +823,35 @@
 
   function receiptHTML(b) {
     var methodLabel = b.payment_method ? SS.PAYMENT_METHOD_LABELS[b.payment_method] : 'Not recorded';
+    var invoiceNo = 'INV-' + b.id.slice(0, 8).toUpperCase();
+    var servicePrice = b.final_price !== null && b.final_price !== undefined ? b.final_price : b.price;
+    var addons = Array.isArray(b.addons) ? b.addons : [];
+    // Add-ons are itemized informationally (using the current public catalog
+    // price) — they are not re-summed against final_price, which stays the
+    // single source of truth an admin may have manually adjusted.
+    var addonRows = addons.map(function (name) {
+      var p = SS.addonPrice(name);
+      return '<tr><td class="receipt-line-sub">+ ' + escapeHtml(name) + '</td><td>' + (p !== null ? SS.formatMoney(p) : '—') + '</td></tr>';
+    }).join('');
+    var stampClass = b.payment_status === 'paid' ? ' receipt-stamp--paid' : '';
+    var stampLabel = SS.PAYMENT_STATUS_LABELS[b.payment_status] || '';
     return (
       '<div class="receipt-doc">' +
         '<div class="receipt-head">' +
           '<img src="images/logo.png" alt="" class="receipt-logo">' +
-          '<div><h2>Southern Suds Mobile Detailing</h2><p>Houston, TX · (713) 269-1708 · southernsudsmd@gmail.com</p></div>' +
+          '<div class="receipt-head-biz"><h2>Southern Suds Mobile Detailing</h2><p>Houston, TX · (713) 269-1708 · southernsudsmd@gmail.com</p></div>' +
+          '<span class="receipt-stamp' + stampClass + '">' + escapeHtml(stampLabel) + '</span>' +
         '</div>' +
-        '<h3 class="receipt-title">Receipt</h3>' +
+        '<div class="receipt-title-row"><h3 class="receipt-title">Invoice / Receipt</h3><span class="receipt-invoice-no mono">' + invoiceNo + '</span></div>' +
         '<div class="receipt-meta">' +
-          '<div><span class="k">Booking ID</span><span class="v mono">' + escapeHtml(b.id.slice(0, 8)) + '</span></div>' +
+          '<div><span class="k">Service Date</span><span class="v">' + fmtDate(b.requested_date) + '</span></div>' +
           '<div><span class="k">Date Completed</span><span class="v">' + (b.payment_date ? fmtDate(b.payment_date) : fmtDate(b.requested_date)) + '</span></div>' +
         '</div>' +
-        '<div class="receipt-section"><span class="k">Billed To</span><p>' + escapeHtml(b.customer_name) + '<br>' + escapeHtml(b.address || '') + '</p></div>' +
+        '<div class="receipt-section"><span class="k">Billed To</span><p>' + escapeHtml(b.customer_name) + '<br>' + escapeHtml(b.address || '') + (b.phone ? '<br>' + escapeHtml(b.phone) : '') + '</p></div>' +
         '<table class="receipt-table">' +
           '<tr><th>Description</th><th>Amount</th></tr>' +
-          '<tr><td>' + escapeHtml(b.service) + (b.vehicle_type ? ' — ' + escapeHtml(b.vehicle_type) : '') + '</td><td>' + SS.formatMoney(b.final_price !== null && b.final_price !== undefined ? b.final_price : b.price) + '</td></tr>' +
+          '<tr><td>' + escapeHtml(b.service) + (b.vehicle_type ? ' — ' + escapeHtml(b.vehicle_type) : '') + '</td><td>' + SS.formatMoney(servicePrice) + '</td></tr>' +
+          addonRows +
           '<tr><td>Tip</td><td>' + SS.formatMoney(b.tip_amount || 0) + '</td></tr>' +
           '<tr class="receipt-total"><td>Total Collected</td><td>' + SS.formatMoney(b.total_collected) + '</td></tr>' +
         '</table>' +
@@ -917,6 +931,34 @@
     }).join('');
   }
 
+  // Shared add-on checkbox picker — reused by Create Appointment and Edit
+  // Appointment. Checking a box records the real add-on name into the
+  // booking's `addons` column (instead of the old free-text notes hack),
+  // so it can be itemized on the receipt later.
+  function addonPickerHTML(idPrefix, selected) {
+    selected = selected || [];
+    return '<div class="form-group form-group-full"><label>Add-ons</label>' +
+      '<div class="addon-checkbox-grid">' +
+        SS.ADDON_CATALOG.map(function (a, i) {
+          var checked = selected.indexOf(a.name) !== -1 ? ' checked' : '';
+          return '<label class="addon-checkbox">' +
+            '<input type="checkbox" id="' + idPrefix + '-addon-' + i + '" value="' + escapeHtml(a.name) + '"' + checked + '>' +
+            '<span class="addon-checkbox-name">' + escapeHtml(a.name) + '</span>' +
+            '<span class="addon-checkbox-price">' + (a.price > 0 ? SS.formatMoney(a.price) : 'Free') + '</span>' +
+          '</label>';
+        }).join('') +
+      '</div></div>';
+  }
+
+  function getSelectedAddons(idPrefix) {
+    var out = [];
+    SS.ADDON_CATALOG.forEach(function (a, i) {
+      var el = document.getElementById(idPrefix + '-addon-' + i);
+      if (el && el.checked) { out.push(a.name); }
+    });
+    return out;
+  }
+
   function openCreateAppointmentModal() {
     var box = document.getElementById('admin-create-box');
     box.innerHTML =
@@ -949,7 +991,7 @@
           SS.STATUSES.filter(function (s) { return s !== 'declined'; }).map(function (s) { return '<option value="' + s + '"' + (s === 'confirmed' ? ' selected' : '') + '>' + SS.STATUS_LABELS[s] + '</option>'; }).join('') +
         '</select></div>' +
       '</div>' +
-      '<div class="form-group"><label>Add-ons (notes)</label><input type="text" id="create-addons" placeholder="e.g. Pet hair removal, engine bay"></div>' +
+      addonPickerHTML('create', []) +
       '<div class="form-group"><label>Notes</label><textarea id="create-notes" rows="3"></textarea></div>' +
       '<p class="field-error" id="create-error"></p>' +
       '<div class="booking-step-nav">' +
@@ -1002,9 +1044,7 @@
       }
 
       var id = SS.uuid();
-      var addonsNote = document.getElementById('create-addons').value.trim();
       var notes = document.getElementById('create-notes').value.trim();
-      var fullNotes = (addonsNote ? 'Add-ons: ' + addonsNote + (notes ? '\n' : '') : '') + notes;
       var priceVal = priceInput.value;
 
       var payload = {
@@ -1021,12 +1061,12 @@
         vehicle_year: document.getElementById('create-vehicle-year').value.trim() || null,
         vehicle_make: document.getElementById('create-vehicle-make').value.trim() || null,
         vehicle_model: document.getElementById('create-vehicle-model').value.trim() || null,
-        addons: [],
+        addons: getSelectedAddons('create'),
         price: priceVal === '' ? null : parseFloat(priceVal),
         price_is_estimate: false,
         requested_date: date,
         requested_time: time,
-        notes: fullNotes || null,
+        notes: notes || null,
         status: document.getElementById('create-status').value,
         tip_amount: parseFloat(document.getElementById('create-tip').value) || 0,
         payment_status: document.getElementById('create-payment-status').value
@@ -1173,6 +1213,7 @@
         '<div class="admin-detail-field"><span class="k">Price</span><span class="v">' + priceText(b) + '</span></div>' +
         '<div class="admin-detail-field"><span class="k">Requested Date</span><span class="v">' + fmtDate(b.requested_date) + '</span></div>' +
         '<div class="admin-detail-field"><span class="k">Requested Time</span><span class="v">' + escapeHtml(b.requested_time) + '</span></div>' +
+        (b.addons && b.addons.length ? '<div class="admin-detail-field admin-detail-field--wide"><span class="k">Add-ons</span><span class="v">' + b.addons.map(function (a) { var p = SS.addonPrice(a); return escapeHtml(a) + (p !== null ? ' (' + SS.formatMoney(p) + ')' : ''); }).join(', ') + '</span></div>' : '') +
       '</div>' +
       (b.final_price !== null && b.final_price !== undefined ? paymentSummaryHTML(b) : '') +
       '<div class="admin-detail-notes">' + (b.notes ? escapeHtml(b.notes) : 'No customer notes.') + '</div>' +
@@ -1196,6 +1237,7 @@
             SS.PAYMENT_STATUSES.map(function (s) { return '<option value="' + s + '"' + (b.payment_status === s ? ' selected' : '') + '>' + SS.PAYMENT_STATUS_LABELS[s] + '</option>'; }).join('') +
           '</select></div>' +
         '</div>' +
+        addonPickerHTML('edit', b.addons || []) +
         '<div class="form-group"><label>Notes</label><textarea id="edit-notes" rows="3">' + escapeHtml(b.notes || '') + '</textarea></div>' +
         '<p class="field-hint">Editing the price here is saved exactly as entered — nothing recalculates it.</p>' +
         '<div class="booking-step-nav" style="margin-top:0.8em;">' +
@@ -1251,7 +1293,8 @@
         address: document.getElementById('edit-address').value,
         price: priceVal === '' ? null : parseFloat(priceVal),
         payment_status: document.getElementById('edit-payment-status').value,
-        notes: document.getElementById('edit-notes').value
+        notes: document.getElementById('edit-notes').value,
+        addons: getSelectedAddons('edit')
       };
       updateBooking(b.id, patch).then(function () { editForm.hidden = true; openDetail(b.id); });
     });
