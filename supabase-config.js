@@ -24,3 +24,10 @@ window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXB
 // key lives only in the send-push-notification Edge Function's secrets and
 // is never in any file that reaches the browser.
 window.VAPID_PUBLIC_KEY = 'BAbx_Z1O1mJ0R9zU0UYAGN41mugn-61iZx-R6ieAQp1cJg_FNxl1np8GhNxBD3z6UwiBmdn5I_Z53FBN4X_z8i4';
+
+// Meta (Facebook/Instagram) Pixel ID. Like the keys above, this is meant to
+// be public — every site running Meta Pixel ships it in client-side JS,
+// visible via view-source on any page that uses it. See meta-pixel.js.
+// Paste your real Pixel ID here once you have it (Events Manager → Data
+// Sources → your pixel → Settings) — until then, tracking silently no-ops.
+window.META_PIXEL_ID = 'YOUR_META_PIXEL_ID';

@@ -783,6 +783,66 @@
           '<div class="admin-detail-field"><span class="k">Payment Method</span><span class="v">' + escapeHtml(methodLabel) + '</span></div>' +
           '<div class="admin-detail-field"><span class="k">Payment Date</span><span class="v">' + (b.payment_date ? fmtDate(b.payment_date) : '—') + '</span></div>' +
         '</div>' +
+        '<div class="admin-receipt-row">' +
+          '<span class="admin-receipt-status">' + (b.receipt_sent_at ? '✓ Receipt emailed ' + fmtDateTime(b.receipt_sent_at) : 'Receipt not yet emailed') + '</span>' +
+          '<div style="display:flex; gap:0.5em;">' +
+            '<button type="button" class="btn btn-secondary" id="admin-view-receipt-btn">View / Print Receipt</button>' +
+            '<button type="button" class="btn btn-secondary" id="admin-send-receipt-btn">' + (b.receipt_sent_at ? 'Resend Receipt' : 'Email Receipt') + '</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function openReceiptView(b) {
+    var modal = document.getElementById('admin-receipt-modal');
+    var box = document.getElementById('admin-receipt-box');
+    box.innerHTML =
+      '<button type="button" class="modal-close" data-close-modal aria-label="Close">&times;</button>' +
+      receiptHTML(b) +
+      '<div class="booking-step-nav" style="margin-top:1em;">' +
+        '<button type="button" class="btn btn-secondary" id="admin-receipt-close-btn">Close</button>' +
+        '<button type="button" class="btn btn-primary" id="admin-receipt-print-btn">Print</button>' +
+      '</div>';
+    modal.hidden = false;
+    box.querySelector('.modal-close').addEventListener('click', function () { modal.hidden = true; });
+    document.getElementById('admin-receipt-close-btn').addEventListener('click', function () { modal.hidden = true; });
+    document.getElementById('admin-receipt-print-btn').addEventListener('click', function () { window.print(); });
+  }
+  document.getElementById('admin-receipt-modal').addEventListener('click', function (e) { if (e.target === this) { this.hidden = true; } });
+
+  function sendReceiptEmail(bookingId) {
+    if (SS.DEMO_MODE) { return Promise.resolve({ ok: false, error: 'Email sending is not available in demo mode.' }); }
+    return SS.getClient().rpc('send_receipt_email', { p_booking_id: bookingId }).then(function (res) {
+      if (res.error) { return { ok: false, error: res.error.message }; }
+      var existing = findBooking(bookingId);
+      if (existing && res.data && res.data.ok) { existing.receipt_sent_at = new Date().toISOString(); }
+      return res.data || { ok: false, error: 'No response' };
+    });
+  }
+
+  function receiptHTML(b) {
+    var methodLabel = b.payment_method ? SS.PAYMENT_METHOD_LABELS[b.payment_method] : 'Not recorded';
+    return (
+      '<div class="receipt-doc">' +
+        '<div class="receipt-head">' +
+          '<img src="images/logo.png" alt="" class="receipt-logo">' +
+          '<div><h2>Southern Suds Mobile Detailing</h2><p>Houston, TX · (713) 269-1708 · southernsudsmd@gmail.com</p></div>' +
+        '</div>' +
+        '<h3 class="receipt-title">Receipt</h3>' +
+        '<div class="receipt-meta">' +
+          '<div><span class="k">Booking ID</span><span class="v mono">' + escapeHtml(b.id.slice(0, 8)) + '</span></div>' +
+          '<div><span class="k">Date Completed</span><span class="v">' + (b.payment_date ? fmtDate(b.payment_date) : fmtDate(b.requested_date)) + '</span></div>' +
+        '</div>' +
+        '<div class="receipt-section"><span class="k">Billed To</span><p>' + escapeHtml(b.customer_name) + '<br>' + escapeHtml(b.address || '') + '</p></div>' +
+        '<table class="receipt-table">' +
+          '<tr><th>Description</th><th>Amount</th></tr>' +
+          '<tr><td>' + escapeHtml(b.service) + (b.vehicle_type ? ' — ' + escapeHtml(b.vehicle_type) : '') + '</td><td>' + SS.formatMoney(b.final_price !== null && b.final_price !== undefined ? b.final_price : b.price) + '</td></tr>' +
+          '<tr><td>Tip</td><td>' + SS.formatMoney(b.tip_amount || 0) + '</td></tr>' +
+          '<tr class="receipt-total"><td>Total Collected</td><td>' + SS.formatMoney(b.total_collected) + '</td></tr>' +
+        '</table>' +
+        '<p class="receipt-method">Payment Method: ' + escapeHtml(methodLabel) + '</p>' +
+        '<p class="receipt-thanks">Thank you for choosing Southern Suds Mobile Detailing.</p>' +
       '</div>'
     );
   }
@@ -1228,6 +1288,22 @@
         setTimeout(function () { savedMsg.hidden = true; }, 2000);
       });
     });
+
+    var viewReceiptBtn = document.getElementById('admin-view-receipt-btn');
+    if (viewReceiptBtn) { viewReceiptBtn.addEventListener('click', function () { openReceiptView(b); }); }
+    var sendReceiptBtn = document.getElementById('admin-send-receipt-btn');
+    if (sendReceiptBtn) {
+      sendReceiptBtn.addEventListener('click', function () {
+        if (!b.email) { alert('This customer has no email on file — add one via Edit Appointment first.'); return; }
+        sendReceiptBtn.disabled = true;
+        sendReceiptBtn.textContent = 'Sending…';
+        sendReceiptEmail(b.id).then(function (result) {
+          sendReceiptBtn.disabled = false;
+          if (result.ok) { openDetail(b.id); }
+          else { sendReceiptBtn.textContent = b.receipt_sent_at ? 'Resend Receipt' : 'Email Receipt'; alert('Could not send receipt: ' + (result.error || 'unknown error')); }
+        });
+      });
+    }
 
     wirePhotoUpload(b);
     renderPhotoGallery(b);

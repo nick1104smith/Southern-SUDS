@@ -190,9 +190,31 @@
         }
         return;
       }
+      // Advancing past Step 1 (service picked, moving to contact info) is
+      // the clearest "genuinely started booking" signal — fires once.
+      if (window.ssTrackInitiateCheckout && Number(stepEl.getAttribute('data-step')) === 1) {
+        window.ssTrackInitiateCheckout();
+      }
       goToStep(Number(btn.getAttribute('data-step-next')));
     });
   });
+
+  // Passive "reached the booking section" signal for a future retargeting
+  // audience — fires once, the first time the stepper scrolls into view.
+  if (window.ssTrackViewContent && 'IntersectionObserver' in window) {
+    var stepperEl = document.getElementById('booking-v2-steps');
+    if (stepperEl) {
+      var viewContentObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            window.ssTrackViewContent();
+            viewContentObserver.disconnect();
+          }
+        });
+      }, { threshold: 0.3 });
+      viewContentObserver.observe(stepperEl);
+    }
+  }
 
   document.querySelectorAll('.booking-back-btn').forEach(function (btn) {
     btn.addEventListener('click', function () { goToStep(Number(btn.getAttribute('data-step-back'))); });
@@ -318,6 +340,12 @@
     var payload = buildPayload();
 
     function onSuccess() {
+      // The ONE real conversion event — fires only here, only after the
+      // booking is actually saved. Never on page load, never on opening
+      // the form. This is what Ads Manager should optimize toward.
+      if (window.ssTrackLead) {
+        window.ssTrackLead({ service: payload.service, value: typeof payload.price === 'number' ? payload.price : undefined, eventId: bookingId });
+      }
       form.hidden = true;
       if (confirmationEl) {
         confirmationEl.hidden = false;

@@ -495,6 +495,38 @@
 .admin-payment-summary h4 { font-size: var(--fs-base); margin-bottom: 0.5em; }
 .admin-complete-total { font-size: var(--fs-lg); font-weight: 800; color: var(--a-accent-bright); margin: 0.8em 0; }
 
+.admin-receipt-row {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6em;
+  margin-top: 0.8em; padding-top: 0.8em; border-top: 1px dashed var(--a-border);
+}
+.admin-receipt-status { font-size: var(--fs-xs); color: var(--a-text-muted); font-weight: 600; }
+
+/* ---- Printable receipt document -------------------------------------------- */
+.receipt-doc { background: #fff; color: #1c1714; padding: 1.5em; border-radius: var(--radius-sm); }
+.receipt-head { display: flex; align-items: center; gap: 1em; border-bottom: 2px solid #c81e1e; padding-bottom: 1em; margin-bottom: 1em; }
+.receipt-logo { width: 52px; height: 52px; border-radius: 8px; object-fit: cover; }
+.receipt-head h2 { margin: 0; font-size: 1.1rem; color: #1c1714; }
+.receipt-head p { margin: 0.2em 0 0; font-size: 0.78rem; color: #6f645b; }
+.receipt-title { text-align: center; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.85rem; color: #6f645b; margin: 0 0 1em; }
+.receipt-meta { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 1em; }
+.receipt-meta .k { display: block; font-size: 0.7rem; text-transform: uppercase; color: #a3968a; }
+.receipt-section { margin-bottom: 1em; font-size: 0.9rem; }
+.receipt-section .k { display: block; font-size: 0.7rem; text-transform: uppercase; color: #a3968a; margin-bottom: 0.2em; }
+.receipt-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-bottom: 1em; }
+.receipt-table th { text-align: left; border-bottom: 1px solid #e6dcd2; padding: 0.5em 0; color: #a3968a; font-size: 0.75rem; text-transform: uppercase; }
+.receipt-table th:last-child, .receipt-table td:last-child { text-align: right; }
+.receipt-table td { padding: 0.5em 0; border-bottom: 1px solid #f0e9e1; }
+.receipt-table tr.receipt-total td { font-weight: 800; border-bottom: none; padding-top: 0.8em; }
+.receipt-method, .receipt-thanks { font-size: 0.85rem; color: #6f645b; margin: 0.3em 0; }
+
+@media print {
+  body > *:not(.modal-overlay) { display: none !important; }
+  .modal-overlay { position: static !important; background: none !important; padding: 0 !important; display: block !important; }
+  .modal-overlay:not(#admin-receipt-modal) { display: none !important; }
+  .modal-box { box-shadow: none !important; max-height: none !important; max-width: none !important; }
+  .modal-close, .booking-step-nav { display: none !important; }
+}
+
 /* ---- Settings: Push Notifications card ------------------------------------ */
 .admin-push-card {
   background: var(--a-surface);
