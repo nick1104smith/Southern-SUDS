@@ -392,7 +392,6 @@ h2 { font-size: var(--fs-3xl); }
   flex-shrink: 0;
 }
 .brand-logo--nav { height: 80px; width: auto; }
-.brand-logo--hero { width: 220px; height: auto; margin: 0 auto; }
 .brand-logo--footer { width: 165px; height: auto; }
 .brand-logo--confirm { width: 76px; height: auto; margin: 0 auto var(--space-sm); }
 
@@ -507,7 +506,6 @@ h2 { font-size: var(--fs-3xl); }
 
 .hero-content { position: relative; z-index: 1; padding: var(--space-2xl) var(--space-md); }
 .hero-text { max-width: 640px; }
-.hero-text .brand-logo--hero { width: 190px; margin: 0 0 var(--space-md); }
 .hero-badge {
   display: inline-flex;
   align-items: center;
@@ -766,13 +764,14 @@ textarea:disabled {
   align-items: center;
   justify-content: center;
   width: 44px; height: 44px;
-  font-size: 1.3rem;
   border-radius: 50%;
   background: rgba(239, 27, 27, 0.12);
   border: 1px solid rgba(255, 49, 49, 0.35);
   margin-bottom: var(--space-xs);
+  color: var(--color-primary);
 }
-.package-card-featured .package-icon { background: rgba(255, 49, 49, 0.18); }
+.package-icon svg { width: 22px; height: 22px; }
+.package-card-featured .package-icon { color: var(--accent-glow); background: rgba(255, 49, 49, 0.18); }
 .package-card-header h3 { font-size: var(--fs-xl); margin-bottom: 0.2em; }
 .package-price { font-size: var(--fs-lg); font-weight: 800; color: var(--accent); margin-bottom: 0.4em; }
 .package-card-featured .package-price { color: var(--accent-glow); }
@@ -923,12 +922,13 @@ textarea:disabled {
   align-items: center;
   justify-content: center;
   width: 40px; height: 40px;
-  font-size: 1.15rem;
   border-radius: 50%;
   background: rgba(239, 27, 27, 0.14);
   border: 1px solid rgba(255, 49, 49, 0.35);
   margin-bottom: var(--space-xs);
+  color: var(--accent-glow);
 }
+.service-icon svg { width: 20px; height: 20px; }
 .service-card h3 { font-size: var(--fs-lg); }
 .service-badge {
   display: inline-block;
@@ -958,6 +958,7 @@ textarea:disabled {
 .service-note { font-size: var(--fs-xs); color: var(--text-on-dark-muted); flex-grow: 1; margin-bottom: var(--space-sm); }
 .service-card-fleet { background: var(--gradient-primary); border-color: transparent; }
 .service-card-fleet .service-note, .service-card-fleet .service-price { color: rgba(255,255,255,0.92); }
+.service-card-fleet .service-icon { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.4); color: #fff; }
 
 /* Same fix as .package-btn: long name + price labels (e.g. "Book Stain
    Removal — $129") must wrap instead of forcing their .services-grid /
@@ -1012,13 +1013,15 @@ textarea:disabled {
   box-shadow: var(--shadow-md), 0 0 14px rgba(239, 27, 27, 0.15);
 }
 .benefit-icon {
-  font-size: 2rem;
   width: 64px; height: 64px;
   display: flex; align-items: center; justify-content: center;
   margin: 0 auto var(--space-sm);
   background: var(--gradient-primary);
   border-radius: 50%;
+  box-shadow: 0 8px 20px rgba(239, 27, 27, 0.3);
+  color: #fff;
 }
+.benefit-icon svg { width: 28px; height: 28px; }
 .benefit-card h3 { font-size: var(--fs-lg); }
 .benefit-card p { font-size: var(--fs-sm); margin-bottom: 0; }
 
@@ -1050,7 +1053,13 @@ textarea:disabled {
   display: flex; align-items: center; justify-content: center;
   box-shadow: var(--shadow-primary);
 }
-.step-icon { font-size: 1.8rem; margin-bottom: var(--space-xs); }
+.step-icon {
+  display: flex; align-items: center; justify-content: center;
+  width: 48px; height: 48px;
+  margin: 0 auto var(--space-xs);
+  color: var(--accent-glow);
+}
+.step-icon svg { width: 26px; height: 26px; }
 .step-card h3 { font-size: var(--fs-lg); }
 .step-card p { font-size: var(--fs-sm); margin-bottom: 0; }
 
@@ -1502,12 +1511,13 @@ textarea:disabled {
   align-items: center;
   justify-content: center;
   width: 48px; height: 48px;
-  font-size: 1.4rem;
   border-radius: 50%;
   background: rgba(168, 54, 84, 0.16);
   border: 1px solid rgba(168, 54, 84, 0.4);
   margin-bottom: var(--space-xs);
+  color: var(--burgundy-bright);
 }
+.contact-card-icon svg { width: 22px; height: 22px; }
 .contact-card h3 {
   font-size: var(--fs-sm);
   text-transform: uppercase;
@@ -1796,8 +1806,10 @@ textarea:disabled {
   .brand-logo--nav { height: 58px; }
   h2 { font-size: var(--fs-2xl); }
   .btn { padding: 0.7em 1.3em; }
-  .package-icon { width: 38px; height: 38px; font-size: 1.1rem; }
-  .service-icon { width: 34px; height: 34px; font-size: 1rem; }
+  .package-icon { width: 38px; height: 38px; }
+  .package-icon svg { width: 19px; height: 19px; }
+  .service-icon { width: 34px; height: 34px; }
+  .service-icon svg { width: 17px; height: 17px; }
 
   .nav-links {
     position: fixed;
